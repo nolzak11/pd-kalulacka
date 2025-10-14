@@ -1,59 +1,324 @@
 <!DOCTYPE html>
 <html lang="cs">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark light">
   <title>Kalkulačka projektové dokumentace (PD)</title>
   <style>
-    :root { --bg:#0f172a; --card:#111827; --muted:#334155; --text:#e5e7eb; --accent:#38bdf8; --ok:#22c55e; --warn:#f59e0b; --err:#ef4444; }
-    *{ box-sizing:border-box; }
-    body{ margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; background:linear-gradient(180deg,#0b1220,#0f172a); color:var(--text); }
-    .container{ max-width:1100px; margin:32px auto; padding:20px; }
-    .grid{ display:grid; grid-template-columns:1fr; gap:16px; }
-    @media(min-width:900px){ .grid{ grid-template-columns:1.1fr 1fr; } }
-    .card{ background:rgba(17,24,39,.72); backdrop-filter: blur(10px); border:1px solid #1f2937; border-radius:16px; padding:18px; box-shadow:0 10px 30px rgba(0,0,0,.35); }
-    h1{ font-size:28px; margin:0 0 10px; letter-spacing:.2px; }
-    p.sub{ color:#cbd5e1; margin:0 0 18px; }
-    label{ font-size:12px; color:#cbd5e1; display:block; margin-bottom:6px; }
-    input, select{ width:100%; padding:12px 12px; border-radius:10px; border:1px solid #334155; background:#0b1220; color:var(--text); outline:none; }
-    input[type="number"]{ appearance:textfield; }
-    .row{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-    .btn{ appearance:none; border:1px solid #334155; background:#0b1220; color:#e2e8f0; padding:10px 14px; border-radius:10px; cursor:pointer; font-weight:600; transition:all .15s ease; }
-    .btn:hover{ transform:translateY(-1px); border-color:#475569; }
-    .btn.primary{ background:linear-gradient(180deg,#0891b2,#0284c7); border-color:transparent; }
-    .btn.ghost{ background:transparent; }
-    .stack{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
-    .table{ width:100%; border-collapse:collapse; margin-top:8px; }
-    .table th, .table td{ border-bottom:1px dashed #334155; padding:10px 6px; text-align:left; }
-    .table th{ font-size:12px; color:#cbd5e1; font-weight:600; }
-    .right{ text-align:right; }
-    .muted{ color:#94a3b8; font-size:12px; }
-    .kpi{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:10px; }
-    .kpi .item{ background:#0b1220; border:1px solid #1f2937; padding:12px; border-radius:12px; }
-    .kpi .value{ font-size:20px; font-weight:700; }
-    .pill{ display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:999px; background:#0b1220; border:1px solid #334155; font-size:12px; color:#cbd5e1; }
-    .hr{ height:1px; background:linear-gradient(90deg,transparent,#334155,transparent); margin:14px 0; border:none; }
-    details{ border:1px solid #334155; border-radius:12px; padding:10px 12px; background:#0b1220; }
-    details summary{ cursor:pointer; font-weight:600; }
-    .footnote{ font-size:11px; color:#94a3b8; margin-top:6px; }
-    .badge{ font-size:11px; padding:4px 8px; border-radius:999px; background:#0b1220; border:1px solid #334155; margin-left:6px; }
-    .total{ font-weight:800; font-size:22px; }
-    .notice{ font-size:12px; color:#93c5fd; }
-    .nowrap{ white-space:nowrap; }
+    :root {
+      --bg: #0f172a;
+      --card: #111827;
+      --muted: #334155;
+      --text: #e5e7eb;
+      --accent: #38bdf8;
+      --ok: #22c55e;
+      --warn: #f59e0b;
+      --err: #ef4444;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      background: linear-gradient(180deg, #0b1220, #0f172a);
+      color: var(--text);
+    }
+
+    .container {
+      max-width: 1600px;
+      margin: 32px auto;
+      padding: 20px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    .card {
+      background: rgba(17, 24, 39, .72);
+      backdrop-filter: blur(10px);
+      border: 1px solid #1f2937;
+      border-radius: 16px;
+      padding: 18px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, .35);
+    }
+
+    h1 {
+      font-size: 28px;
+      margin: 0 0 10px;
+      letter-spacing: .2px;
+    }
+
+    p.sub {
+      color: #cbd5e1;
+      margin: 0 0 18px;
+    }
+
+    label {
+      font-size: 12px;
+      color: #cbd5e1;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 12px 12px;
+      border-radius: 10px;
+      border: 1px solid #334155;
+      background: #0b1220;
+      color: var(--text);
+      outline: none;
+    }
+
+    input[type="number"] {
+      appearance: textfield;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .btn {
+      appearance: none;
+      border: 1px solid #334155;
+      background: #0b1220;
+      color: #e2e8f0;
+      padding: 10px 14px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all .15s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      border-color: #475569;
+    }
+
+    .btn.primary {
+      background: linear-gradient(180deg, #0891b2, #0284c7);
+      border-color: transparent;
+    }
+
+    .btn.ghost {
+      background: transparent;
+    }
+
+    .stack {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+    }
+
+    .table th,
+    .table td {
+      border-bottom: 1px dashed #334155;
+      padding: 10px 6px;
+      text-align: left;
+    }
+
+    .table th {
+      font-size: 12px;
+      color: #cbd5e1;
+      font-weight: 600;
+    }
+
+    .right {
+      text-align: right;
+    }
+
+    .muted {
+      color: #94a3b8;
+      font-size: 12px;
+    }
+
+    .kpi {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .kpi .item {
+      background: #0b1220;
+      border: 1px solid #1f2937;
+      padding: 12px;
+      border-radius: 12px;
+    }
+
+    .kpi .value {
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #0b1220;
+      border: 1px solid #334155;
+      font-size: 12px;
+      color: #cbd5e1;
+    }
+
+    .hr {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #334155, transparent);
+      margin: 14px 0;
+      border: none;
+    }
+
+    details {
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 10px 12px;
+      background: #0b1220;
+    }
+
+    details summary {
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .footnote {
+      font-size: 11px;
+      color: #94a3b8;
+      margin-top: 6px;
+    }
+
+    .badge {
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: #0b1220;
+      border: 1px solid #334155;
+      margin-left: 6px;
+    }
+
+    .total {
+      font-weight: 800;
+      font-size: 22px;
+    }
+
+    .notice {
+      font-size: 12px;
+      color: #93c5fd;
+    }
+
+    .nowrap {
+      white-space: nowrap;
+    }
+
+    .help-badge {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      width: 18px;
+      height: 18px;
+      margin-left: 6px;
+      border-radius: 999px;
+      border: 1px solid #334155;
+      background: #0b1220;
+      color: #cbd5e1;
+      font-size: 12px;
+      cursor: help;
+      position: relative;
+    }
+
+    .help-badge:hover .help-tip,
+    .help-badge:focus-within .help-tip {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .help-tip {
+      position: absolute;
+      top: 130%;
+      right: 0;
+      min-width: 240px;
+      padding: 10px;
+      border-radius: 10px;
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: #e2e8f0;
+      font-size: 12px;
+      line-height: 1.4;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: all .2s ease;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    @media(min-width:900px) {
+      .grid {
+        grid-template-columns: 1.1fr 1fr;
+      }
+    }
+
+    @page {
+      size: A4;
+      margin: 16mm;
+    }
+
+    @media print {
+
+      th,
+      td {
+        white-space: nowrap
+      }
+
+      body {
+        font-size: 12px;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      table {
+        page-break-inside: avoid;
+      }
+    }
   </style>
 </head>
+
 <body>
   <div class="container">
     <div class="card">
       <h1>Kalkulačka projektové dokumentace (PD)</h1>
-      <p class="sub">Orientační výpočet ceny PD jako podíl z celkových investičních nákladů (CIS). Vše je plně upravitelné a uloží se do vašeho prohlížeče.</p>
+      <p class="sub">Orientační výpočet ceny PD jako podíl z celkových investičních nákladů (CIS). Vše je plně
+        upravitelné a uloží se do vašeho prohlížeče.</p>
       <div class="grid">
         <!-- LEFT: Inputs -->
         <section class="card">
           <div class="row">
             <div>
-              <label>Celkové investiční náklady (CIS) – Kč (bez DPH)</label>
-              <input id="cis" type="number" min="0" step="1000" placeholder="např. 10000000" />
+              <label for="cis">Celkové investiční náklady (CIS) – Kč (bez DPH)</label>
+              <input id="cis" type="number" inputmode="numeric" min="0" step="1000" placeholder="např. 10000000" />
             </div>
             <div>
               <label>Typ stavby</label>
@@ -66,27 +331,39 @@
 
           <div class="row" style="margin-top:12px;">
             <div>
-              <label>Složitost / náročnost (koeficient)</label>
-              <input id="coef" type="number" step="0.05" min="0.5" max="2" value="1" />
+              <label for="coef">Složitost / náročnost (koeficient)</label>
+              <input id="coef" type="number" inputmode="decimal" step="0.05" min="0.5" max="2" value="1" />
               <div class="muted">0,8 = jednodušší | 1,0 = běžná | 1,2 = složitější</div>
             </div>
             <div>
-              <label>Režie / rezerva (%) – volitelné</label>
-              <input id="reserve" type="number" step="0.5" min="0" max="50" value="0" />
+              <label for="reserve">Režie / rezerva (%) – volitelné</label>
+              <input id="reserve" type="number" inputmode="decimal" step="0.5" min="0" max="50" value="0" />
             </div>
           </div>
 
-          <div class="hr"></div>
-
-          <div class="stack" style="justify-content:space-between;">
-            <div class="stack">
-              <span class="pill">DPH nepočítám (orientační).<span class="badge">Kč bez DPH</span></span>
+          <div class="row" style="margin-top:12px;">
+            <div>
+              <label for="hourlyRate">Hodinová sazba (Kč/h) – pro kontrolní výpočet</label>
+              <input id="hourlyRate" type="number" inputmode="numeric" min="0" step="50" placeholder="např. 1200" />
+              <div class="muted">Zadej svou firmní/UNIKA sazbu. Uloží se k typu.</div>
             </div>
-            <div class="stack">
-              <button class="btn" id="saveDefaults">Uložit aktuální % pro tento typ</button>
-              <button class="btn ghost" id="exportCfg">Export nastavení</button>
-              <input type="file" id="importCfg" accept="application/json" style="display:none;" />
-              <button class="btn ghost" id="importBtn">Import</button>
+            <div>
+              <label for="hourlyCoef">Koeficient profese (volitelně)
+                <span class="help-badge" tabindex="0">?
+                  <span class="help-tip">
+                    Koeficient násobí hodinovou sazbu podle seniority/typu práce:
+                    <br><b>1.0</b> běžná profese,
+                    <b>0.8–0.9</b> junior,
+                    <b>1.2–1.3</b> senior/HIP,
+                    <b>1.4–1.6</b> specialista,
+                    <b>1.5–2.0</b> expresní termín.
+                    <br>Vyšší koeficient ⇒ menší hodinový limit (při stejné ceně z %).
+                  </span>
+                </span>
+              </label>
+
+              <input id="hourlyCoef" type="number" inputmode="decimal" step="0.05" min="0.5" max="2" value="1" />
+              <div class="muted">Např. 1,0 = základ, 1,2 = senior/urgentní.</div>
             </div>
           </div>
 
@@ -94,6 +371,7 @@
 
           <details>
             <summary>Procenta podle stupňů PD (upravte dle potřeby)</summary>
+            <div class="table-wrap">
             <table class="table" id="stagesTable">
               <thead>
                 <tr>
@@ -104,7 +382,9 @@
               </thead>
               <tbody id="stagesBody"></tbody>
             </table>
-            <div class="footnote">Tip: Procenta jsou výchozí pro zvolený typ, ale můžete je kdykoli přepsat. Tlačítkem výše je uložíte jako výchozí pro budoucí použití.</div>
+          </div>
+            <div class="footnote">Tip: Procenta jsou výchozí pro zvolený typ, ale můžete je kdykoli přepsat. Tlačítkem
+              výše je uložíte jako výchozí pro budoucí použití.</div>
           </details>
 
           <div class="hr"></div>
@@ -112,6 +392,7 @@
           <div class="stack">
             <button class="btn primary" id="calculate">Spočítat</button>
             <button class="btn" id="printOffer">Tisk / PDF nabídka</button>
+            <button class="btn" id="saveDefaults">Uložit aktuální % pro tento typ</button>
             <span class="notice">Výsledky se počítají průběžně po kliknutí na „Spočítat”.</span>
           </div>
         </section>
@@ -134,12 +415,14 @@
             </div>
           </div>
 
+          <div class="table-wrap">
           <table class="table" style="margin-top:16px;" id="resultTable">
             <thead>
               <tr>
                 <th>Stupeň</th>
                 <th class="right nowrap">% z CIS</th>
-                <th class="right nowrap">Cena (Kč)</th>
+                <th class="right nowrap">Cena % (Kč)</th>
+                <th class="right nowrap">Hodinový limit (h)</th>
               </tr>
             </thead>
             <tbody id="resultBody"></tbody>
@@ -147,32 +430,41 @@
               <tr>
                 <th class="right" colspan="2">Součet</th>
                 <th class="right total" id="resultSum">–</th>
+                <th class="right total" id="resultHours">–</th>
               </tr>
             </tfoot>
           </table>
+        </div>
 
           <div class="hr"></div>
 
-          <div class="muted">Pozn.: Jde o orientační odhad dle procenta z CIS. Skutečná cena závisí na zadání, rozsahu profese, BIM, koordinaci, termínech atd.</div>
+          <div class="muted">Pozn.: Jde o orientační odhad dle procenta z CIS. Skutečná cena závisí na zadání, rozsahu
+            profese, BIM, koordinaci, termínech atd.</div>
         </section>
       </div>
     </div>
   </div>
 
   <template id="typeDialogTpl">
-    <div class="card" style="position:fixed; inset:0; margin:auto; width:min(560px,92vw); height:auto; z-index:50; border:1px solid #334155;">
+    <div class="card"
+      style="position:fixed; inset:0; margin:auto; width:min(560px,92vw); height:auto; z-index:50; border:1px solid #334155;">
       <h3 style="margin-top:0">Přidat nový typ stavby</h3>
       <div class="row">
         <div>
           <label>Název typu</label>
-          <input id="newTypeName" placeholder="např. Administrativní budova"/>
+          <input id="newTypeName" placeholder="např. Administrativní budova" />
         </div>
       </div>
       <div class="hr"></div>
       <div>
         <label>Výchozí procenta pro stupně</label>
         <table class="table">
-          <thead><tr><th>Stupeň</th><th class="right">% z CIS</th></tr></thead>
+          <thead>
+            <tr>
+              <th>Stupeň</th>
+              <th class="right">% z CIS</th>
+            </tr>
+          </thead>
           <tbody id="newTypePerc"></tbody>
         </table>
       </div>
@@ -186,83 +478,97 @@
 
   <script>
     // ---------- Helpers ----------
-    const fmtCZK = (n)=> new Intl.NumberFormat('cs-CZ', { style:'currency', currency:'CZK', maximumFractionDigits:0 }).format(n||0);
-    const fmtPct = (n)=> `${(n??0).toLocaleString('cs-CZ',{maximumFractionDigits:2})}%`;
-    const el = (id)=> document.getElementById(id);
+    const fmtCZK = (n) => new Intl.NumberFormat('cs-CZ', { style: 'currency', currency: 'CZK', maximumFractionDigits: 0 }).format(n || 0);
+    const fmtPct = (n) => `${(n ?? 0).toLocaleString('cs-CZ', { maximumFractionDigits: 2 })}%`;
+    const el = (id) => document.getElementById(id);
+    const num = (v) => parseFloat(String(v).replace(',', '.')) || 0;
+    let __calcTimer = null;
+    function recalcDebounced() {
+      clearTimeout(__calcTimer);
+      __calcTimer = setTimeout(calculate, 500);
+    }
+    const APP_VER = '1.0.1';
 
     // ---------- Config (defaults + localStorage) ----------
     const STAGES = [
-      { key:'STU', name:'Studie / návrh' },
-      { key:'DUR', name:'Dokumentace pro územní řízení (DUR)' },
-      { key:'DSP', name:'PD pro povolení stavby (DSP)' },
-      { key:'DPS', name:'PD pro provedení stavby (DPS)' },
-      { key:'AD',  name:'Autorský dozor (AD)' },
+      { key: 'STU', name: 'Studie / návrh' },
+      { key: 'DUR', name: 'Dokumentace pro územní řízení (DUR)' },
+      { key: 'DSP', name: 'PD pro povolení stavby (DSP)' },
+      { key: 'DPS', name: 'PD pro provedení stavby (DPS)' },
+      { key: 'AD', name: 'Autorský dozor (AD)' },
     ];
 
     const DEFAULTS = {
-      // % z CIS, součet obvykle 2–5 % (orientačně)
-      'RD':  { label:'Rodinný dům (RD)',           perc:{ STU:0.5, DUR:0.4, DSP:1.2, DPS:1.6, AD:0.4 } },
-      'BD':  { label:'Bytový dům (BD)',            perc:{ STU:0.6, DUR:0.6, DSP:1.4, DPS:2.0, AD:0.5 } },
-      'PRU': { label:'Průmyslový objekt',          perc:{ STU:0.4, DUR:0.5, DSP:1.0, DPS:1.8, AD:0.4 } },
-      'BESS':{ label:'BESS (bateriové úložiště)',  perc:{ STU:0.3, DUR:0.6, DSP:1.1, DPS:1.5, AD:0.4 } },
+      'RD': { label: 'Rodinný dům (RD)', perc: { STU: 0.5, DUR: 0.4, DSP: 1.2, DPS: 1.6, AD: 0.4 }, rate: 1200 },
+      'BD': { label: 'Bytový dům (BD)', perc: { STU: 0.6, DUR: 0.6, DSP: 1.4, DPS: 2.0, AD: 0.5 }, rate: 1300 },
+      'PRU': { label: 'Průmyslový objekt', perc: { STU: 0.4, DUR: 0.5, DSP: 1.0, DPS: 1.8, AD: 0.4 }, rate: 1200 },
+      'BESS': { label: 'BESS (bateriové úložiště)', perc: { STU: 0.3, DUR: 0.6, DSP: 1.1, DPS: 1.5, AD: 0.4 }, rate: 1300 },
     };
-
     const LS_KEY = 'pd_calc_config_v1';
 
-    function loadConfig(){
-      try{
+    function loadConfig() {
+      try {
         const raw = localStorage.getItem(LS_KEY);
-        if(!raw) return structuredClone(DEFAULTS);
+        if (!raw) return structuredClone(DEFAULTS);
         const cfg = JSON.parse(raw);
         // merge defaults for any missing keys
-        for(const k of Object.keys(DEFAULTS)){
-          if(!cfg[k]) cfg[k] = structuredClone(DEFAULTS[k]);
+        for (const k of Object.keys(DEFAULTS)) {
+          if (!cfg[k]) cfg[k] = structuredClone(DEFAULTS[k]);
         }
         return cfg;
-      }catch(e){ return structuredClone(DEFAULTS); }
+      } catch (e) { return structuredClone(DEFAULTS); }
     }
-    function saveConfig(cfg){ localStorage.setItem(LS_KEY, JSON.stringify(cfg)); }
+    function saveConfig(cfg) { localStorage.setItem(LS_KEY, JSON.stringify(cfg)); }
 
     let CONFIG = loadConfig();
 
     // ---------- UI populate ----------
-    function populateTypeSelect(){
+    function populateTypeSelect() {
       const sel = el('type');
       sel.innerHTML = '';
-      for(const [key,obj] of Object.entries(CONFIG)){
+      for (const [key, obj] of Object.entries(CONFIG)) {
         const opt = document.createElement('option');
         opt.value = key; opt.textContent = obj.label; sel.appendChild(opt);
       }
       // default to first
-      if(!sel.value){ sel.selectedIndex = 0; }
+      if (!sel.value) { sel.selectedIndex = 0; }
     }
 
-    function buildStagesTable(){
+    function buildStagesTable() {
       const tbody = el('stagesBody');
       tbody.innerHTML = '';
       const current = CONFIG[el('type').value];
-      for(const st of STAGES){
+
+      for (const st of STAGES) {
         const tr = document.createElement('tr');
-        const tdName = document.createElement('td');
-        tdName.textContent = st.name;
-        const tdPct = document.createElement('td'); tdPct.className='right';
+        const tdName = document.createElement('td'); tdName.textContent = st.name;
+        const tdPct = document.createElement('td'); tdPct.className = 'right';
         const inp = document.createElement('input');
-        inp.type='number'; inp.step='0.1'; inp.min='0'; inp.max='100'; inp.value = (current.perc[st.key] ?? 0);
+        inp.type = 'number'; inp.step = '0.1'; inp.min = '0'; inp.max = '100';
+        inp.value = (current.perc[st.key] ?? 0);
         inp.dataset.stage = st.key;
         tdPct.appendChild(inp);
-        const tdInclude = document.createElement('td'); tdInclude.className='right';
-        const chk = document.createElement('input'); chk.type='checkbox'; chk.checked = (current.perc[st.key] ?? 0) > 0; chk.dataset.stage=st.key;
+        const tdInclude = document.createElement('td'); tdInclude.className = 'right';
+        const chk = document.createElement('input'); chk.type = 'checkbox';
+        chk.checked = (current.perc[st.key] ?? 0) > 0; chk.dataset.stage = st.key;
         tdInclude.appendChild(chk);
+
         tr.appendChild(tdName); tr.appendChild(tdPct); tr.appendChild(tdInclude);
         tbody.appendChild(tr);
       }
+
+      // dosadit výchozí hodinovku a vybudovat tabulku hodin
+      const currentRate = CONFIG[el('type').value]?.rate;
+      el('hourlyRate').value = (currentRate != null && !Number.isNaN(currentRate))
+        ? currentRate
+        : (el('hourlyRate').value || 1200);
     }
 
-    function gatherPercents(){
+    function gatherPercents() {
       const rows = el('stagesBody').querySelectorAll('tr');
       const out = {}; const include = {};
-      rows.forEach(r=>{
-        const pct = parseFloat(r.querySelector('input[type="number"]').value||'0');
+      rows.forEach(r => {
+        const pct = num(r.querySelector('input[type="number"]').value || '0');
         const stage = r.querySelector('input[type="number"]').dataset.stage;
         const on = r.querySelector('input[type="checkbox"]').checked;
         out[stage] = pct;
@@ -271,65 +577,66 @@
       return { perc: out, include };
     }
 
-    function calculate(){
-      const cis = parseFloat(el('cis').value||'0');
-      const coef = parseFloat(el('coef').value||'1');
-      const reserve = parseFloat(el('reserve').value||'0'); // % navíc
-      const { perc, include } = gatherPercents();
-      const resultBody = el('resultBody'); resultBody.innerHTML='';
-      let total = 0;
-      const lines = [];
-      for(const st of STAGES){
-        const p = (include[st.key] ? (perc[st.key]||0) : 0);
-        const base = cis * (p/100);
-        const withCoef = base * coef * (1 + reserve/100);
-        if(include[st.key] && (p>0)){
-          total += withCoef;
-        }
-        lines.push({ name: st.name, p:p, price: withCoef });
-      }
-      // KPI
-      el('kpiCis').textContent = fmtCZK(cis);
-      el('kpiCoef').textContent = `${coef.toLocaleString('cs-CZ',{maximumFractionDigits:2})} × ${(1+reserve/100).toLocaleString('cs-CZ',{maximumFractionDigits:2})}`;
-      el('kpiTotal').textContent = fmtCZK(total);
+    function calculate() {
+      const cis = num(el('cis').value);
+      const coef = num(el('coef').value);
+      const reserve = num(el('reserve').value);
+      const hourlyRate = num(el('hourlyRate').value);
+      const hourlyCoef = num(el('hourlyCoef').value);
 
-      // Table
-      for(const ln of lines){
+      const { perc, include } = gatherPercents();
+
+      const resultBody = el('resultBody'); resultBody.innerHTML = '';
+      let totalPercent = 0, totalHours = 0;
+
+      for (const st of STAGES) {
+        const p = (include[st.key] ? (perc[st.key] || 0) : 0);
+        const pricePercent = (cis * (p / 100)) * coef * (1 + reserve / 100);
+        const hoursBudget = (hourlyRate > 0 && hourlyCoef > 0) ? (pricePercent / (hourlyRate * hourlyCoef)) : 0;
+
+        if (include[st.key] && p > 0) {
+          totalPercent += pricePercent;
+          totalHours += hoursBudget;
+        }
+
         const tr = document.createElement('tr');
-        const tdN = document.createElement('td'); tdN.textContent = ln.name; tr.appendChild(tdN);
-        const tdP = document.createElement('td'); tdP.className='right'; tdP.textContent = fmtPct(ln.p); tr.appendChild(tdP);
-        const tdC = document.createElement('td'); tdC.className='right'; tdC.textContent = fmtCZK(ln.price); tr.appendChild(tdC);
+        tr.innerHTML = `
+      <td>${st.name}</td>
+      <td class="right">${(p).toLocaleString('cs-CZ', { maximumFractionDigits: 2 })}%</td>
+      <td class="right">${fmtCZK(pricePercent)}</td>
+      <td class="right">${hoursBudget.toLocaleString('cs-CZ', { maximumFractionDigits: 1 })}</td>`;
         resultBody.appendChild(tr);
       }
-      el('resultSum').textContent = fmtCZK(total);
+
+      // KPI + součty
+      el('kpiCis').textContent = fmtCZK(cis);
+      el('kpiCoef').textContent = `${coef.toLocaleString('cs-CZ', { maximumFractionDigits: 2 })} × ${(1 + reserve / 100).toLocaleString('cs-CZ', { maximumFractionDigits: 2 })}`;
+      el('kpiTotal').textContent = fmtCZK(totalPercent);
+
+      el('resultSum').textContent = fmtCZK(totalPercent);
+      el('resultHours').textContent = totalHours.toLocaleString('cs-CZ', { maximumFractionDigits: 1 });
     }
 
-    function exportConfig(){
-      const blob = new Blob([JSON.stringify(CONFIG,null,2)], {type:'application/json'});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a'); a.href=url; a.download='pd_kalkulacka_konfigurace.json'; a.click(); URL.revokeObjectURL(url);
-    }
-
-    function openNewTypeDialog(){
+    function openNewTypeDialog() {
       const tpl = el('typeDialogTpl');
       const node = tpl.content.cloneNode(true);
       document.body.appendChild(node);
       const dlg = document.body.lastElementChild; // the inserted card
       const tbody = dlg.querySelector('#newTypePerc');
-      tbody.innerHTML='';
-      for(const st of STAGES){
+      tbody.innerHTML = '';
+      for (const st of STAGES) {
         const tr = document.createElement('tr');
         tr.innerHTML = `<td>${st.name}</td><td class="right"><input type="number" step="0.1" min="0" max="100" value="0" data-stage="${st.key}"/></td>`;
         tbody.appendChild(tr);
       }
-      dlg.querySelector('#cancelType').onclick = ()=> dlg.remove();
-      dlg.querySelector('#confirmType').onclick = ()=>{
+      dlg.querySelector('#cancelType').onclick = () => dlg.remove();
+      dlg.querySelector('#confirmType').onclick = () => {
         const name = dlg.querySelector('#newTypeName').value?.trim();
-        if(!name){ alert('Zadejte název typu.'); return; }
-        const key = name.toUpperCase().normalize('NFD').replace(/[^A-Z0-9]+/g,'').slice(0,6) || `TYP${Math.random().toString(36).slice(2,6)}`;
-        const perc={};
-        dlg.querySelectorAll('input[data-stage]').forEach(i=> perc[i.dataset.stage] = parseFloat(i.value||'0'));
-        CONFIG[key] = { label:name, perc };
+        if (!name) { alert('Zadejte název typu.'); return; }
+        const key = name.toUpperCase().normalize('NFD').replace(/[^A-Z0-9]+/g, '').slice(0, 6) || `TYP${Math.random().toString(36).slice(2, 6)}`;
+        const perc = {};
+        dlg.querySelectorAll('input[data-stage]').forEach(i => perc[i.dataset.stage] = num(i.value || '0'));
+        CONFIG[key] = { label: name, perc };
         saveConfig(CONFIG);
         populateTypeSelect();
         el('type').value = key;
@@ -340,42 +647,36 @@
     }
 
     // ---------- Event wiring ----------
-    window.addEventListener('DOMContentLoaded', ()=>{
+    window.addEventListener('DOMContentLoaded', () => {
       populateTypeSelect();
       buildStagesTable();
       calculate();
 
-      el('type').addEventListener('change', ()=>{ buildStagesTable(); calculate(); });
-      el('cis').addEventListener('input', ()=>{/* passive until click calc */});
-      el('coef').addEventListener('input', ()=>{/* passive */});
-      el('reserve').addEventListener('input', ()=>{/* passive */});
-      el('stagesBody').addEventListener('input', (e)=>{ if(e.target.matches('input')){/* passive */} });
+      el('type').addEventListener('change', () => { buildStagesTable(); calculate(); });
+      el('cis').addEventListener('input', () => {/* passive until click calc */ });
+      el('coef').addEventListener('input', () => {/* passive */ });
+      el('reserve').addEventListener('input', () => {/* passive */ });
+      el('stagesBody').addEventListener('input', (e) => { if (e.target.matches('input')) {/* passive */ } });
+      el('appVer').textContent = `Verze ${APP_VER}`;
+      el('year').textContent = new Date().getFullYear();
 
       el('calculate').addEventListener('click', calculate);
-      el('saveDefaults').addEventListener('click', ()=>{
-        const key = el('type').value; const { perc } = gatherPercents();
-        CONFIG[key].perc = perc; saveConfig(CONFIG);
+      el('saveDefaults').addEventListener('click', () => {
+        const key = el('type').value;
+        const { perc } = gatherPercents();
+        CONFIG[key].perc = perc;
+        CONFIG[key].rate = num(el('hourlyRate').value);
+        saveConfig(CONFIG);
         alert('Uloženo jako výchozí pro tento typ.');
       });
+
+
       el('addType').addEventListener('click', openNewTypeDialog);
 
-      el('exportCfg').addEventListener('click', exportConfig);
-      el('importBtn').addEventListener('click', ()=> el('importCfg').click());
-      el('importCfg').addEventListener('change', async (e)=>{
-        const file = e.target.files?.[0]; if(!file) return;
-        try{
-          const text = await file.text();
-          const obj = JSON.parse(text);
-          if(typeof obj !== 'object') throw new Error('Neplatný formát.');
-          CONFIG = obj; saveConfig(CONFIG); populateTypeSelect(); buildStagesTable(); calculate();
-          alert('Konfigurace importována.');
-        }catch(err){ alert('Import se nezdařil: '+err.message); }
-      });
-
-      el('printOffer').addEventListener('click', ()=>{
-        const cis = parseFloat(el('cis').value||'0');
-        const coef = parseFloat(el('coef').value||'1');
-        const reserve = parseFloat(el('reserve').value||'0');
+      el('printOffer').addEventListener('click', () => {
+        const cis = num(el('cis').value);
+        const coef = num(el('coef').value);
+        const reserve = num(el('reserve').value);
         const typeLabel = CONFIG[el('type').value]?.label || el('type').value;
         const { perc, include } = gatherPercents();
         let html = `<!doctype html><html lang="cs"><head><meta charset="utf-8"><title>Nabídka PD</title>
@@ -385,23 +686,70 @@
           </style></head><body>`;
         html += `<h1>Nabídka – projektová dokumentace</h1>`;
         html += `<div class="muted">Typ stavby: <b>${typeLabel}</b> | CIS: <b>${fmtCZK(cis)}</b> | Koef.: <b>${coef}</b> | Rezerva: <b>${reserve}%</b></div>`;
-        html += `<table><thead><tr><th>Stupeň</th><th class='right'>% z CIS</th><th class='right'>Cena (Kč)</th></tr></thead><tbody>`;
-        let sum=0;
-        for(const st of STAGES){
-          if(!include[st.key]) continue;
-          const p = perc[st.key]||0; const price = cis*(p/100)*coef*(1+reserve/100); sum+=price;
-          html += `<tr><td>${st.name}</td><td class='right'>${p.toLocaleString('cs-CZ',{maximumFractionDigits:2})}%</td><td class='right'>${fmtCZK(price)}</td></tr>`;
+        html += `<table><thead>
+  <tr>
+    <th>Stupeň</th>
+    <th class='right'>% z CIS</th>
+    <th class='right'>Cena % (Kč)</th>
+    <th class='right'>Hodinový limit (h)</th>
+  </tr>
+</thead><tbody>`;
+
+        let sum = 0;
+        let sumHours = 0;
+        for (const st of STAGES) {
+          if (!include[st.key]) continue;
+          const p = perc[st.key] || 0;
+          const price = cis * (p / 100) * coef * (1 + reserve / 100);
+          const hourlyRate = num(el('hourlyRate').value);
+          const hourlyCoef = num(el('hourlyCoef').value);
+          const hours = (hourlyRate > 0 && hourlyCoef > 0) ? (price / (hourlyRate * hourlyCoef)) : 0;
+          sum += price;
+          sumHours += hours;
+
+          html += `<tr>
+    <td>${st.name}</td>
+    <td class='right'>${p.toLocaleString('cs-CZ', { maximumFractionDigits: 2 })}%</td>
+    <td class='right'>${fmtCZK(price)}</td>
+    <td class='right'>${hours.toLocaleString('cs-CZ', { maximumFractionDigits: 1 })}</td>
+  </tr>`;
         }
-        html += `</tbody><tfoot><tr><th class='right' colspan='2'>Součet</th><th class='right total'>${fmtCZK(sum)}</th></tr></tfoot></table>`;
+
+        html += `</tbody>
+<tfoot>
+  <tr>
+    <th class='right' colspan='2'>Součet</th>
+    <th class='right total'>${fmtCZK(sum)}</th>
+    <th class='right total'>${sumHours.toLocaleString('cs-CZ', { maximumFractionDigits: 1 })}</th>
+  </tr>
+</tfoot></table>`;
         html += `<p class='muted'>Pozn.: Orientační nabídka bez DPH. Platnost 14 dní, pokud není uvedeno jinak.</p>`;
         html += `</body></html>`;
-        const w = window.open('about:blank','_blank'); w.document.write(html); w.document.close(); w.focus();
-        setTimeout(()=>w.print(), 200);
+        const w = window.open('about:blank', '_blank');
+        if (!w) {
+          alert('Prohlížeč zablokoval nové okno. Povolením vyskakovacího okna pro tuto stránku se otevře náhled nabídky.');
+          return;
+        }
+        w.document.open();
+        w.document.write(html);
+        w.document.close();
+        w.onload = () => { w.focus(); w.print(); };
       });
+      // průběžný přepočet při psaní do hlavních vstupů
+      ['cis', 'coef', 'reserve', 'hourlyRate', 'hourlyCoef'].forEach(id => {
+        el(id).addEventListener('input', recalcDebounced);
+      });
+
+      // a i při editaci procent ve stupních
+      el('stagesBody').addEventListener('input', (e) => {
+        if (e.target.matches('input')) recalcDebounced();
+      });
+
     });
   </script>
   <footer style="margin-top:40px; text-align:center; font-size:12px; color:#94a3b8;">
-    Verze 1.0.0 – © 2025 PD kalkulačka
+    <span id="appVer"></span> – © <span id="year"></span> PD kalkulačka
   </footer>
 </body>
+
 </html>
