@@ -303,6 +303,64 @@
         page-break-inside: avoid;
       }
     }
+
+    /* --- Mobilní vylepšení --- */
+    @media (max-width: 640px) {
+      .container {
+        padding: 12px;
+      }
+
+      h1 {
+        font-size: 22px;
+      }
+
+      .row {
+        grid-template-columns: 1fr;
+      }
+
+      .kpi {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+
+      input,
+      select {
+        font-size: 16px;
+        min-height: 44px;
+      }
+
+      .stack {
+        gap: 8px;
+      }
+
+      .btn {
+        width: 100%;
+      }
+
+      details summary {
+        font-size: 14px;
+      }
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    .table {
+      min-width: 560px;
+    }
+
+    html {
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    .help-badge {
+      touch-action: manipulation;
+    }
   </style>
 </head>
 
@@ -758,11 +816,8 @@
     });
   </script>
   <footer style="margin-top:40px; text-align:center; font-size:12px; color:#94a3b8;">
-    PD Kalkulačka <span id="appVer"></span> – ©<span id="year"></span> Nolzak
+    <span id="appVer"></span> – © <span id="year"></span> PD kalkulačka
   </footer>
 </body>
 
-
 </html>
-
-
