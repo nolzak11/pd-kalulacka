@@ -372,17 +372,17 @@
           <details>
             <summary>Procenta podle stupňů PD (upravte dle potřeby)</summary>
             <div class="table-wrap">
-            <table class="table" id="stagesTable">
-              <thead>
-                <tr>
-                  <th>Stupeň</th>
-                  <th class="right">Podíl z CIS (%)</th>
-                  <th class="right">Zahrnout</th>
-                </tr>
-              </thead>
-              <tbody id="stagesBody"></tbody>
-            </table>
-          </div>
+              <table class="table" id="stagesTable">
+                <thead>
+                  <tr>
+                    <th>Stupeň</th>
+                    <th class="right">Podíl z CIS (%)</th>
+                    <th class="right">Zahrnout</th>
+                  </tr>
+                </thead>
+                <tbody id="stagesBody"></tbody>
+              </table>
+            </div>
             <div class="footnote">Tip: Procenta jsou výchozí pro zvolený typ, ale můžete je kdykoli přepsat. Tlačítkem
               výše je uložíte jako výchozí pro budoucí použití.</div>
           </details>
@@ -393,6 +393,7 @@
             <button class="btn primary" id="calculate">Spočítat</button>
             <button class="btn" id="printOffer">Tisk / PDF nabídka</button>
             <button class="btn" id="saveDefaults">Uložit aktuální % pro tento typ</button>
+            <button class="btn" id="resetConfig">Obnovit výchozí</button>
             <span class="notice">Výsledky se počítají průběžně po kliknutí na „Spočítat”.</span>
           </div>
         </section>
@@ -416,25 +417,25 @@
           </div>
 
           <div class="table-wrap">
-          <table class="table" style="margin-top:16px;" id="resultTable">
-            <thead>
-              <tr>
-                <th>Stupeň</th>
-                <th class="right nowrap">% z CIS</th>
-                <th class="right nowrap">Cena % (Kč)</th>
-                <th class="right nowrap">Hodinový limit (h)</th>
-              </tr>
-            </thead>
-            <tbody id="resultBody"></tbody>
-            <tfoot>
-              <tr>
-                <th class="right" colspan="2">Součet</th>
-                <th class="right total" id="resultSum">–</th>
-                <th class="right total" id="resultHours">–</th>
-              </tr>
-            </tfoot>
-          </table>
-        </div>
+            <table class="table" style="margin-top:16px;" id="resultTable">
+              <thead>
+                <tr>
+                  <th>Stupeň</th>
+                  <th class="right nowrap">% z CIS</th>
+                  <th class="right nowrap">Cena % (Kč)</th>
+                  <th class="right nowrap">Hodinový limit (h)</th>
+                </tr>
+              </thead>
+              <tbody id="resultBody"></tbody>
+              <tfoot>
+                <tr>
+                  <th class="right" colspan="2">Součet</th>
+                  <th class="right total" id="resultSum">–</th>
+                  <th class="right total" id="resultHours">–</th>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
 
           <div class="hr"></div>
 
@@ -499,7 +500,7 @@
     ];
 
     const DEFAULTS = {
-      'RD': { label: 'Rodinný dům (RD)', perc: { STU: 0, DUR: 0, DSP: 0, DPS: 1.8, AD: 0.4 }, rate: 1200 },
+      'RD': { label: 'Rodinný dům (RD)', perc: { STU: 0, DUR: 0, DSP: 0, DPS: 1.8, AD: 0.5 }, rate: 1200 },
       'BD': { label: 'Bytový dům (BD)', perc: { STU: 0.6, DUR: 0.6, DSP: 1.4, DPS: 2.0, AD: 0.5 }, rate: 1200 },
       'PRU': { label: 'Průmyslový objekt', perc: { STU: 0.4, DUR: 0.5, DSP: 1.0, DPS: 1.8, AD: 0.4 }, rate: 1200 },
       'BESS': { label: 'BESS (bateriové úložiště)', perc: { STU: 0.3, DUR: 0.6, DSP: 1.1, DPS: 1.5, AD: 0.4 }, rate: 1200 },
@@ -669,6 +670,15 @@
         saveConfig(CONFIG);
         alert('Uloženo jako výchozí pro tento typ.');
       });
+      el('resetConfig').addEventListener('click', () => {
+        if (confirm('Smazat uložené nastavení a načíst nové výchozí hodnoty?')) {
+          localStorage.removeItem(LS_KEY);
+          CONFIG = loadConfig();
+          populateTypeSelect();
+          buildStagesTable();
+          calculate();
+        }
+      });
 
 
       el('addType').addEventListener('click', openNewTypeDialog);
@@ -751,6 +761,5 @@
     <span id="appVer"></span> – © <span id="year"></span> PD kalkulačka
   </footer>
 </body>
-
 
 </html>
