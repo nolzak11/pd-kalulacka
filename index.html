@@ -436,7 +436,7 @@
             <div>
               <label for="hourlyRate">Hodinová sazba (Kč/h) – pro kontrolní výpočet</label>
               <input id="hourlyRate" type="number" inputmode="numeric" min="0" step="50" placeholder="např. 1200" />
-              <div class="muted">Zadej svou firmní/UNIKA sazbu. Uloží se k typu.</div>
+              <div class="muted">Zadej svou firemní/UNIKA sazbu. Uloží se k typu.</div>
             </div>
             <div>
               <label for="hourlyCoef">Koeficient profese (volitelně)
@@ -474,8 +474,7 @@
                 <tbody id="stagesBody"></tbody>
               </table>
             </div>
-            <div class="footnote">Tip: Procenta jsou výchozí pro zvolený typ, ale můžete je kdykoli přepsat. Tlačítkem
-              výše je uložíte jako výchozí pro budoucí použití.</div>
+            <div class="footnote">Tip: Procenta jsou výchozí pro zvolený typ, ale můžete je kdykoli přepsat.</div>
           </details>
 
           <div class="hr"></div>
@@ -485,7 +484,7 @@
             <button class="btn primary" id="printOffer">Tisk / PDF nabídka</button>
             <button class="btn" id="saveDefaults">Uložit aktuální % pro tento typ</button>
             <button class="btn" id="resetConfig">Obnovit výchozí</button>
-            <span class="notice">Výsledky se počítají průběžně po kliknutí na „Spočítat”.</span>
+            <span class="notice">Výsledky se počítají průběžně, nebo po kliknutí na „Spočítat”.</span>
           </div>
         </section>
 
@@ -579,7 +578,7 @@
       clearTimeout(__calcTimer);
       __calcTimer = setTimeout(calculate, 500);
     }
-    const APP_VER = '1.0.1';
+    const APP_VER = '1.0.2';
 
     // ---------- Config (defaults + localStorage) ----------
     const STAGES = [
