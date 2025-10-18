@@ -42,10 +42,10 @@ const UNIKA_RATES = {
 // Přesunuto přímo do DEFAULTS, aby měl každý typ své vlastní
 const BASE_UNIT_COSTS = {
   RD: { cFveFixed: 50000, cFveKwpVar: 28000, cBessFixed: 0, cBessKwh: 15000, balancePct: 0 },
-  BD: { cFveFixed: 200000, cFveKwpVar: 26000, cBessFixed: 500000, cBessKwh: 8000, balancePct: 0 },
-  PRU: { cFveFixed: 2000000, cFveKwpVar: 18000, cBessFixed: 5000000, cBessKwh: 3000, balancePct: 0 },
-  BESS: { cFveFixed: 0, cFveKwpVar: 0, cBessFixed: 5000000, cBessKwh: 3000, balancePct: 0 },
-  BROWN: { cFveFixed: 2000000, cFveKwpVar: 24000, cBessFixed: 5000000, cBessKwh: 3000, balancePct: 0 },
+  BD: { cFveFixed: 200000, cFveKwpVar: 26000, cBessFixed: 500000, cBessKwh: 6000, balancePct: 0 },
+  PRU: { cFveFixed: 1500000, cFveKwpVar: 26000, cBessFixed: 3000000, cBessKwh: 3500, balancePct: 0 },
+  BESS: { cFveFixed: 0, cFveKwpVar: 0, cBessFixed: 3000000, cBessKwh: 3500, balancePct: 0 },
+  BROWN: { cFveFixed: 1500000, cFveKwpVar: 26000, cBessFixed: 3000000, cBessKwh: 3500, balancePct: 0 },
 };
 
 // Výchozí typy a procenta
