@@ -259,22 +259,52 @@ function calculate() {
   if (!CONFIG.types[typeKey]) return; // Ochrana
 
   const cisObj = currentCIS();
+  const totalCIS = cisObj.totalValue;
+  let calculationBase = 0;
 
-  // --- ZMĚNA ZDE: Rozdělení základu pro výpočet ---
-  const totalCIS = cisObj.totalValue; // Celková CIS pro KPI
-  let calculationBase = 0; // Základ pro výpočet PD
+  // --- NOVÁ LOGIKA: VAROVÁNÍ PŘI NESHODĚ TYPU A VÝKONU ---
+  const warningEl = el('calcWarning');
+  warningEl.textContent = ''; // Vždy nejdřív vyčistit
+  warningEl.style.display = 'none';
+  let warningText = ''; // Text pro tisk
+
+  if (getCisMode() === 'model') { // Varování dává smysl jen v "model" režimu
+    const kWp = num(el('fveKwp').value);
+    const kWh = num(el('bessKwh').value);
+    const industrialTypes = ['PRU', 'BROWN', 'BESS'];
+
+    if (industrialTypes.includes(typeKey)) {
+      // Případ 1: Průmyslový typ, ale malý výkon
+      const isTooSmall = (kWp > 0 && kWp < 50) || (kWh > 0 && kWh < 100);
+      if (isTooSmall) {
+        warningText = 'Varování: Zadaný výkon/kapacita je velmi nízká pro "Průmyslový" typ. Výsledná CIS může být nerealisticky vysoká kvůli fixním nákladům.';
+      }
+    } else if (typeKey === 'RD') {
+      // Případ 2: Rodinný dům, ale velký výkon
+      if (kWp > 50) { // 50kWp je limit pro RD
+        warningText = 'Varování: Zadaný výkon FVE (> 50 kWp) je vysoký pro "Rodinný dům". Zvažte použití typu "Průmyslový objekt".';
+      }
+      if (kWh > 100) { // Větší baterka u RD
+        warningText = 'Varování: Zadaná kapacita BESS (> 100 kWh) je vysoká pro "Rodinný dům". Zvažte použití jiného typu.';
+      }
+    }
+
+    if (warningText) {
+      warningEl.textContent = warningText;
+      warningEl.style.display = 'block';
+    }
+  }
+  // --- KONEC NOVÉ LOGIKY ---
+
 
   if (typeKey === 'RD') {
-    // U Rodinného domu počítáme procenta POUZE z ceny FVE
     calculationBase = cisObj.priceFve;
   } else {
-    // U všech ostatních typů počítáme z celkové CIS
     calculationBase = totalCIS;
   }
 
-
   const coef = num(el('coef').value);
-  const reserve = 0; // teď nepoužíváme zvláštní rezervu mimo BoP, případně lze vrátit pole
+  const reserve = 0;
   const hourlyRate = getRateForCalc();
   const hourlyCoef = num(el('hourlyCoef').value);
 
@@ -284,10 +314,7 @@ function calculate() {
 
   for (const st of STAGES) {
     const p = (include[st.key] ? (perc[st.key] || 0) : 0);
-
-    // ZMĚNA ZDE: Použijeme 'calculationBase' místo 'totalCIS'
     const pricePercent = (calculationBase * (p / 100)) * coef * (1 + reserve / 100);
-
     const hoursBudget = (hourlyRate > 0 && hourlyCoef > 0) ? (pricePercent / (hourlyRate * hourlyCoef)) : 0;
 
     if (include[st.key] && p > 0) {
@@ -297,15 +324,15 @@ function calculate() {
 
     const tr = document.createElement('tr');
     tr.innerHTML = `
-          <td>${st.name}</td>
-          <td class="right">${p.toLocaleString('cs-CZ', { maximumFractionDigits: 2 })}%</td>
-          <td class="right">${fmtCZK(pricePercent)}</td>
-          <td class="right">${hoursBudget.toLocaleString('cs-CZ', { maximumFractionDigits: 1 })}</td>`;
+      <td>${st.name}</td>
+      <td class="right">${p.toLocaleString('cs-CZ', { maximumFractionDigits: 2 })}%</td>
+      <td class="right">${fmtCZK(pricePercent)}</td>
+      <td class="right">${hoursBudget.toLocaleString('cs-CZ', { maximumFractionDigits: 1 })}</td>`;
     resultBody.appendChild(tr);
   }
 
   // KPI
-  el('kpiCis').textContent = fmtCZK(totalCIS); // Zobrazíme celkovou CIS
+  el('kpiCis').textContent = fmtCZK(totalCIS);
   el('kpiCisNote').textContent = cisObj.note || '';
   el('kpiCoef').textContent = `${coef.toLocaleString('cs-CZ', { maximumFractionDigits: 2 })} × ${hourlyCoef.toLocaleString('cs-CZ', { maximumFractionDigits: 2 })} (${CONFIG.types[typeKey].rateMode === 'unika' ? 'UNIKA' : 'Vlastní'}: ${fmtCZK(hourlyRate)}/h)`;
   el('kpiTotal').textContent = fmtCZK(totalPrice);
@@ -432,8 +459,7 @@ function printOffer() {
 
   const { perc, include } = gatherPercents();
   const cisObj = currentCIS();
-  
-  // --- ZMĚNA ZDE: Stejná logika jako v calculate() ---
+
   const totalCIS = cisObj.totalValue;
   let calculationBase = 0;
   if (typeKey === 'RD') {
@@ -441,14 +467,16 @@ function printOffer() {
   } else {
     calculationBase = totalCIS;
   }
-  // --- KONEC ZMĚNY ---
 
   const coef = num(el('coef').value);
   const hourlyCoef = num(el('hourlyCoef').value);
   const rateMode = CONFIG.types[typeKey].rateMode;
   const hourlyRate = getRateForCalc();
-  
-  const reserve = 0; 
+  const reserve = 0;
+
+  // --- ZMĚNA ZDE: Načtení textu varování ---
+  const warningText = el('calcWarning').textContent;
+  // --- KONEC ZMĚNY ---
 
   let html = `<!doctype html><html lang="cs"><head><meta charset="utf-8"><title>Nabídka PD</title>
     <style>
@@ -461,12 +489,19 @@ function printOffer() {
       .right{text-align:right}
       .total{font-weight:800}
       .note{margin-top:10px; color:#475569; font-size:12px}
+      /* Styl pro varování v tisku */
+      .print-warning{color: #d97706; font-weight: bold; padding: 8px; background: #fffbeb; border: 1px solid #fde68a; border-radius: 4px; margin-top: 10px;}
     </style></head><body>`;
 
-  // ZMĚNA ZDE: V tisku zobrazíme celkovou CIS
   html += `<h1>Nabídka – projektová dokumentace</h1>`;
   html += `<div class="muted">Typ: <b>${typeLabel}</b> | CIS: <b>${fmtCZK(totalCIS)}</b> | Koef.: <b>${coef}</b> | Koef. profese: <b>${hourlyCoef}</b></div>`;
   html += `<div class="muted">Sazba: <b>${rateMode === 'unika' ? 'UNIKA' : 'Vlastní'}</b> (${fmtCZK(hourlyRate)}/h)${cisObj.note ? ` | ${cisObj.note}` : ''}</div>`;
+
+  // --- ZMĚNA ZDE: Vložení varování do tisku ---
+  if (warningText) {
+    html += `<div class="print-warning">${warningText}</div>`;
+  }
+  // --- KONEC ZMĚNY ---
 
   html += `<table><thead>
     <tr>
@@ -481,10 +516,7 @@ function printOffer() {
   for (const st of STAGES) {
     if (!include[st.key]) continue;
     const p = perc[st.key] || 0;
-    
-    // ZMĚNA ZDE: Použijeme 'calculationBase'
     const price = (calculationBase * (p / 100)) * coef * (1 + reserve / 100);
-    
     const hours = (hourlyRate > 0 && hourlyCoef > 0) ? (price / (hourlyRate * hourlyCoef)) : 0;
     sum += price; sumHours += hours;
     html += `<tr>

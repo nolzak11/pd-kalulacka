@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="dark light">
   <title>Kalkulačka projektové dokumentace (PD) — v1.2.0</title>
-  
+
   <link rel="stylesheet" href="style.css">
 
 </head>
@@ -70,7 +70,8 @@
                   <input id="cBessKwh" type="number" inputmode="numeric" min="0" step="50" />
                 </div>
               </div>
-              <div class="muted" style="margin-top:6px">Pozn.: FVE i BESS jsou modelovány jako fixní část + variabilní cena za jednotku (kWp/kWh). Výchozí hodnoty se načítají dle Typu stavby.</div>
+              <div class="muted" style="margin-top:6px">Pozn.: FVE i BESS jsou modelovány jako fixní část + variabilní
+                cena za jednotku (kWp/kWh). Výchozí hodnoty se načítají dle Typu stavby.</div>
             </details>
           </div>
 
@@ -190,6 +191,10 @@
               <div class="muted">Celkem PD (součet)</div>
               <div class="value" id="kpiTotal">–</div>
             </div>
+          </div>
+          <div id="calcWarning" class="muted"
+            style="color: var(--warn); margin-top: 8px; text-align: center; display: none; font-weight: 600;">
+
           </div>
 
           <table class="table" style="margin-top:16px;" id="resultTable">
