@@ -50,7 +50,7 @@
 
     // Výchozí typy a procenta
     const DEFAULTS = {
-      'RD': { label: 'Rodinný dům (RD)', perc: { STU: 0.5, DUR: 0.0, DSP: 1.2, DPS: 1.6, AD: 0.4 }, rateMode: 'unika', rateCustom: 700, unitCosts: BASE_UNIT_COSTS.RD },
+      'RD': { label: 'Rodinný dům (RD)', perc: { STU: 0.0, DUR: 0.0, DSP: 0.0, DPS: 3.3, AD: 0.4 }, rateMode: 'unika', rateCustom: 700, unitCosts: BASE_UNIT_COSTS.RD },
       'BD': { label: 'Bytový dům (BD)', perc: { STU: 0.6, DUR: 0.6, DSP: 1.4, DPS: 2.0, AD: 0.5 }, rateMode: 'unika', rateCustom: 700, unitCosts: BASE_UNIT_COSTS.BD },
       'PRU': { label: 'Průmyslový objekt', perc: { STU: 0.4, DUR: 0.5, DSP: 1.0, DPS: 1.8, AD: 0.4 }, rateMode: 'unika', rateCustom: 1200, unitCosts: BASE_UNIT_COSTS.PRU },
       'BROWN': { label: 'Brownfield', perc: { STU: 0.4, DUR: 0.5, DSP: 1.2, DPS: 1.8, AD: 0.4 }, rateMode: 'unika', rateCustom: 1200, unitCosts: BASE_UNIT_COSTS.BROWN },
