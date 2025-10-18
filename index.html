@@ -5,10 +5,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="dark light">
-  <title>Kalkulačka projektové dokumentace (PD) — v1.2.0</title>
-
+  <title>Kalkulačka projektové dokumentace (PD) -</title>
   <link rel="stylesheet" href="style.css">
-
 </head>
 
 <body>
@@ -56,24 +54,13 @@
                   <input id="cFveFixed" type="number" inputmode="numeric" min="0" step="50000" />
                 </div>
                 <div>
-                  <label for="cFveKwpVar">FVE variabilní (Kč/kWp)</label>
-                  <input id="cFveKwpVar" type="number" inputmode="numeric" min="0" step="100" />
-                </div>
-              </div>
-              <div class="row" style="margin-top:12px;">
-                <div>
                   <label for="cBessFixed">BESS fixní část (Kč)</label>
                   <input id="cBessFixed" type="number" inputmode="numeric" min="0" step="50000" />
                 </div>
-                <div>
-                  <label for="cBessKwh">BESS variabilní (Kč/kWh)</label>
-                  <input id="cBessKwh" type="number" inputmode="numeric" min="0" step="50" />
-                </div>
               </div>
-              <div class="muted" style="margin-top:6px">Pozn.: FVE i BESS jsou modelovány jako fixní část + variabilní
-                cena za jednotku (kWp/kWh). Výchozí hodnoty se načítají dle Typu stavby.</div>
+              <div class="muted" style="margin-top:6px">Pozn.: FVE i BESS jsou modelovány jako fixní část + variabilní cena za jednotku (kWp/kWh). Variabilní ceny jsou odstupňované a řízené "expertním" nastavením v `script.js` pro každý Typ stavby.</div>
             </details>
-          </div>
+            </div>
 
           <div id="manualBlock" style="display:none;margin-top:12px;">
             <div class="row">
@@ -192,10 +179,9 @@
               <div class="value" id="kpiTotal">–</div>
             </div>
           </div>
-          <div id="calcWarning" class="muted"
-            style="color: var(--warn); margin-top: 8px; text-align: center; display: none; font-weight: 600;">
 
-          </div>
+          <div id="calcWarning" class="muted" style="color: var(--warn); margin-top: 8px; text-align: center; display: none; font-weight: 600;">
+            </div>
 
           <table class="table" style="margin-top:16px;" id="resultTable">
             <thead>
