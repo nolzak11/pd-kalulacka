@@ -587,13 +587,33 @@
 
   <script>
     // ---------- Helpers ----------
-    const APP_VER = '1.1.1';
+    const APP_VER = '1.1.2';
     const el = (id) => document.getElementById(id);
     const num = (v) => parseFloat(String(v).replace(',', '.')) || 0;
     const fmtCZK = (n) => new Intl.NumberFormat('cs-CZ', { style: 'currency', currency: 'CZK', maximumFractionDigits: 0 }).format(n || 0);
 
     let __calcTimer = null;
     const recalcDebounced = () => { clearTimeout(__calcTimer); __calcTimer = setTimeout(calculate, 300); };
+
+    let __saveTimer = null;
+    const saveLastUsedDebounced = () => {
+      clearTimeout(__saveTimer);
+      __saveTimer = setTimeout(() => {
+        // Uložíme jen poslední zadané parametry, ne nastavení typů
+        CONFIG.last.unitCosts = {
+          cFveKwp: num(el('cFveKwp').value),
+          cBessFixed: num(el('cBessFixed').value),
+          cBessKwh: num(el('cBessKwh').value),
+          balancePct: num(el('balancePct').value)
+        };
+        CONFIG.last.modelParams = {
+          fveKwp: num(el('fveKwp').value),
+          bessKwh: num(el('bessKwh').value)
+        };
+        // Musíme uložit celý CONFIG
+        saveConfig(CONFIG);
+      }, 800); // Dáme delší timeout než pro výpočet
+    };
 
     // ---------- Konfigurace (stupně PD) ----------
     const STAGES = [
@@ -902,19 +922,13 @@
       if (CONFIG.types[key].rateMode === 'custom') {
         CONFIG.types[key].rateCustom = num(el('hourlyRate').value);
       }
-      // poslední volby (unit costs a model params)
-      CONFIG.last.unitCosts = {
-        cFveKwp: num(el('cFveKwp').value),
-        cBessFixed: num(el('cBessFixed').value),
-        cBessKwh: num(el('cBessKwh').value),
-        balancePct: num(el('balancePct').value)
-      };
-      CONFIG.last.modelParams = {
-        fveKwp: num(el('fveKwp').value),
-        bessKwh: num(el('bessKwh').value)
-      };
+
+      // ODEBRÁNO: ukládání CONFIG.last.unitCosts a CONFIG.last.modelParams
+      // Ty se teď ukládají automaticky při změně (viz saveLastUsedDebounced)
+
       saveConfig(CONFIG);
-      alert('Uloženo jako výchozí pro tento typ a poslední nastavení.');
+      // Zpřesnili jsme hlášku, aby bylo jasné, co se uložilo:
+      alert('Uloženo: Výchozí procenta a sazby pro typ "' + CONFIG.types[key].label + '"');
     }
     el('resetConfig').addEventListener('click', () => {
       if (confirm('Smazat uložené nastavení a načíst nové výchozí hodnoty?')) {
@@ -937,6 +951,9 @@
       const hourlyCoef = num(el('hourlyCoef').value);
       const rateMode = CONFIG.types[typeKey].rateMode;
       const hourlyRate = getRateForCalc();
+      
+      // OPRAVA: Přidána proměnná 'reserve', aby byl výpočet shodný s 'calculate'
+      const reserve = 0; // Zatím 0, stejně jako v 'calculate'
 
       let html = `<!doctype html><html lang="cs"><head><meta charset="utf-8"><title>Nabídka PD</title>
         <style>
@@ -968,7 +985,10 @@
       for (const st of STAGES) {
         if (!include[st.key]) continue;
         const p = perc[st.key] || 0;
-        const price = cis * (p / 100) * coef;
+        
+        // OPRAVA: Výpočet sjednocen s 'calculate' (přidáno * (1 + reserve / 100))
+        const price = (cis * (p / 100)) * coef * (1 + reserve / 100);
+        
         const hours = (hourlyRate > 0 && hourlyCoef > 0) ? (price / (hourlyRate * hourlyCoef)) : 0;
         sum += price; sumHours += hours;
         html += `<tr>
@@ -995,8 +1015,8 @@
       w.onload = () => { w.focus(); w.print(); };
     }
 
-    // ---------- Init ----------
-    window.addEventListener('DOMContentLoaded', () => {
+   // ---------- Init ----------
+   window.addEventListener('DOMContentLoaded', () => {
       el('appVer').textContent = `Verze ${APP_VER}`;
       el('year').textContent = new Date().getFullYear();
 
@@ -1029,14 +1049,26 @@
 
       el('rateUnika').addEventListener('change', onRateModeChange);
       el('rateCustom').addEventListener('change', onRateModeChange);
-      el('hourlyRate').addEventListener('input', onHourlyRateInput);
+      el('hourlyRate').addEventListener('input', onHourlyRateInput); // ukládá se sám v onHourlyRateInput
 
       el('cisModeManual').addEventListener('change', onCisModeChange);
       el('cisModeModel').addEventListener('change', onCisModeChange);
 
-      // přepočet při psaní
-      ['cis', 'coef', 'hourlyCoef', 'fveKwp', 'bessKwh', 'cFveKwp', 'cBessFixed', 'cBessKwh', 'balancePct']
+      // --- ZMĚNA ZDE ---
+      // Pole, která jen přepočítávají (ale neukládají se automaticky)
+      ['cis', 'coef', 'hourlyCoef']
         .forEach(id => { const n = el(id); if (n) n.addEventListener('input', recalcDebounced); });
+      
+      // Pole, která přepočítávají A zárověň se automaticky ukládají
+      ['fveKwp', 'bessKwh', 'cFveKwp', 'cBessFixed', 'cBessKwh', 'balancePct']
+        .forEach(id => { 
+            const n = el(id); 
+            if (n) {
+                n.addEventListener('input', recalcDebounced);
+                n.addEventListener('input', saveLastUsedDebounced); // Přidáno automatické ukládání
+            }
+        });
+      // --- KONEC ZMĚNY ---
 
       // procenta ve stupních
       el('stagesBody').addEventListener('input', (e) => { if (e.target.matches('input')) recalcDebounced(); });
