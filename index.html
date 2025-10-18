@@ -5,7 +5,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="dark light">
-  <title>Kalkulačka projektové dokumentace (PD)</title>
+  <title>Kalkulačka projektové dokumentace (PD) — </title>
   <style>
     :root {
       --bg: #0f172a;
@@ -19,26 +19,52 @@
     }
 
     * {
-      box-sizing: border-box;
+      box-sizing: border-box
     }
 
     body {
       margin: 0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial;
       background: linear-gradient(180deg, #0b1220, #0f172a);
-      color: var(--text);
+      color: var(--text)
     }
 
     .container {
-      max-width: 1600px;
+      max-width: 1700px;
       margin: 32px auto;
-      padding: 20px;
+      padding: 20px
     }
 
     .grid {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 16px;
+      gap: 16px
+    }
+
+    @media(min-width:900px) {
+      .grid {
+        grid-template-columns: 1.1fr 1fr
+      }
+    }
+
+    @media print {
+
+      th,
+      td {
+        white-space: nowrap
+      }
+
+      body {
+        font-size: 12px;
+        background: #fff;
+        color: #000
+      }
+
+      .card {
+        box-shadow: none;
+        border-color: #e5e7eb;
+        background: #fff
+      }
     }
 
     .card {
@@ -47,25 +73,25 @@
       border: 1px solid #1f2937;
       border-radius: 16px;
       padding: 18px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, .35);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, .35)
     }
 
     h1 {
       font-size: 28px;
       margin: 0 0 10px;
-      letter-spacing: .2px;
+      letter-spacing: .2px
     }
 
     p.sub {
       color: #cbd5e1;
-      margin: 0 0 18px;
+      margin: 0 0 18px
     }
 
     label {
       font-size: 12px;
       color: #cbd5e1;
       display: block;
-      margin-bottom: 6px;
+      margin-bottom: 6px
     }
 
     input,
@@ -76,17 +102,17 @@
       border: 1px solid #334155;
       background: #0b1220;
       color: var(--text);
-      outline: none;
+      outline: none
     }
 
     input[type="number"] {
-      appearance: textfield;
+      appearance: textfield
     }
 
     .row {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 12px;
+      gap: 12px
     }
 
     .btn {
@@ -98,135 +124,114 @@
       border-radius: 10px;
       cursor: pointer;
       font-weight: 600;
-      transition: all .15s ease;
+      transition: all .15s ease
     }
 
     .btn:hover {
       transform: translateY(-1px);
-      border-color: #475569;
+      border-color: #475569
     }
 
     .btn.primary {
       background: linear-gradient(180deg, #0891b2, #0284c7);
-      border-color: transparent;
+      border-color: transparent
     }
 
     .btn.ghost {
-      background: transparent;
+      background: transparent
     }
 
     .stack {
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
-      align-items: center;
+      align-items: center
     }
 
     .table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 8px;
+      margin-top: 8px
     }
 
     .table th,
     .table td {
       border-bottom: 1px dashed #334155;
       padding: 10px 6px;
-      text-align: left;
+      text-align: left
     }
 
     .table th {
       font-size: 12px;
       color: #cbd5e1;
-      font-weight: 600;
+      font-weight: 600
     }
 
     .right {
-      text-align: right;
+      text-align: right
     }
 
     .muted {
       color: #94a3b8;
-      font-size: 12px;
+      font-size: 12px
     }
 
     .kpi {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 12px;
-      margin-top: 10px;
+      margin-top: 10px
     }
 
     .kpi .item {
       background: #0b1220;
       border: 1px solid #1f2937;
       padding: 12px;
-      border-radius: 12px;
+      border-radius: 12px
     }
 
     .kpi .value {
       font-size: 20px;
-      font-weight: 700;
-    }
-
-    .pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      background: #0b1220;
-      border: 1px solid #334155;
-      font-size: 12px;
-      color: #cbd5e1;
+      font-weight: 700
     }
 
     .hr {
       height: 1px;
       background: linear-gradient(90deg, transparent, #334155, transparent);
       margin: 14px 0;
-      border: none;
+      border: none
     }
 
     details {
       border: 1px solid #334155;
       border-radius: 12px;
       padding: 10px 12px;
-      background: #0b1220;
+      background: #0b1220
     }
 
     details summary {
       cursor: pointer;
-      font-weight: 600;
+      font-weight: 600
     }
 
     .footnote {
       font-size: 11px;
       color: #94a3b8;
-      margin-top: 6px;
-    }
-
-    .badge {
-      font-size: 11px;
-      padding: 4px 8px;
-      border-radius: 999px;
-      background: #0b1220;
-      border: 1px solid #334155;
-      margin-left: 6px;
+      margin-top: 6px
     }
 
     .total {
       font-weight: 800;
-      font-size: 22px;
+      font-size: 22px
     }
 
     .notice {
       font-size: 12px;
-      color: #93c5fd;
+      color: #93c5fd
     }
 
     .nowrap {
-      white-space: nowrap;
+      white-space: nowrap
     }
 
     .help-badge {
@@ -242,21 +247,21 @@
       color: #cbd5e1;
       font-size: 12px;
       cursor: help;
-      position: relative;
+      position: relative
     }
 
     .help-badge:hover .help-tip,
     .help-badge:focus-within .help-tip {
       opacity: 1;
       transform: translateY(0);
-      pointer-events: auto;
+      pointer-events: auto
     }
 
     .help-tip {
       position: absolute;
       top: 130%;
       right: 0;
-      min-width: 240px;
+      min-width: 600px;
       padding: 10px;
       border-radius: 10px;
       background: #1e293b;
@@ -268,131 +273,65 @@
       transform: translateY(4px);
       transition: all .2s ease;
       pointer-events: none;
-      z-index: 10;
+      z-index: 10
     }
 
-    .table-wrap {
-      overflow-x: auto;
+    .switch {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      font-size: 13px
     }
 
-    @media(min-width:900px) {
-      .grid {
-        grid-template-columns: 1.1fr 1fr;
-      }
+    .switch input {
+      width: auto
     }
 
-    @page {
-      size: A4;
-      margin: 16mm;
+    .grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px
     }
 
-    @media print {
-
-      th,
-      td {
-        white-space: nowrap
-      }
-
-      body {
-        font-size: 12px;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-      }
-
-      table {
-        page-break-inside: avoid;
-      }
-    }
-
-    /* --- Mobilní vylepšení --- */
-    @media (max-width: 640px) {
-      .container {
-        padding: 12px;
-      }
-
-      h1 {
-        font-size: 22px;
-      }
-
+    @media(max-width:640px) {
       .row {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr
       }
 
-      .kpi {
-        grid-template-columns: 1fr;
-        gap: 10px;
+      .grid-3 {
+        grid-template-columns: 1fr
       }
 
       input,
       select {
-        font-size: 16px;
-        min-height: 44px;
-      }
-
-      .stack {
-        gap: 8px;
-      }
-
-      .btn {
-        width: 100%;
-      }
-
-      details summary {
-        font-size: 14px;
+        padding: 12px 10px
       }
     }
 
-    .table-wrap {
-      overflow-x: auto;
+    .inline-options {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap
     }
 
-    .table {
-      min-width: 560px;
+    .switch label {
+      margin: 0
     }
 
-    html {
-      -webkit-text-size-adjust: 100%;
+    .row.align-start {
+      align-items: flex-start;
     }
 
-    body {
-      padding-bottom: env(safe-area-inset-bottom);
+    .inline-options {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
     }
 
-    .help-badge {
-      touch-action: manipulation;
-    }
-
-    /* 1) Oprava “divných” pozadí a přesahujících rohů */
-    .card {
-      overflow: hidden;
-    }
-
-    /* ořízne blur v rozích */
-
-    /* 2) Na mobilu zjednodušíme: vnější card bude “průhledná”,
-      aby nevznikal dojem víc krabiček nad sebou */
-    @media (max-width: 640px) {
-      .container>.card {
-        background: transparent;
-        border: 0;
-        box-shadow: none;
-        padding: 0;
-      }
-
-      /* vnitřní panely necháme jako skutečné karty */
-      .grid>.card {
-        background: #111827;
-        /* plná barva místo průhledné + blur */
-        border: 1px solid #1f2937;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, .35);
-        border-radius: 16px;
-        padding: 18px;
-      }
-
-      /* vypnout blur na mobilu – iOS ho mívá “flekatý” */
-      .card {
-        backdrop-filter: none;
-      }
+    #hourlyRate {
+      max-width: 160px;
     }
   </style>
 </head>
@@ -401,45 +340,119 @@
   <div class="container">
     <div class="card">
       <h1>Kalkulačka projektové dokumentace (PD)</h1>
-      <p class="sub">Orientační výpočet ceny PD jako podíl z celkových investičních nákladů (CIS). Vše je plně
-        upravitelné a uloží se do vašeho prohlížeče.</p>
+      <p class="sub">Orientační výpočet ceny PD. Nyní s odhadem CIS z parametrů FVE/BESS a UNIKA sazbami.</p>
+
       <div class="grid">
         <!-- LEFT: Inputs -->
         <section class="card">
-          <div class="row">
-            <div>
-              <label for="cis">Celkové investiční náklady (CIS) – Kč (bez DPH)</label>
-              <input id="cis" type="number" inputmode="numeric" min="0" step="1000" placeholder="např. 10000000" />
+          <!-- A) Způsob stanovení CIS -->
+          <div class="inline-options">
+            <div class="switch">
+              <input type="radio" name="cisMode" id="cisModeModel" value="model" checked>
+              <label for="cisModeModel">Odhad CIS z FVE/BESS</label>
             </div>
-            <div>
-              <label>Typ stavby</label>
-              <div class="stack">
-                <select id="type"></select>
-                <button class="btn" id="addType">+ Nový typ</button>
+            <div class="switch">
+              <input type="radio" name="cisMode" id="cisModeManual" value="manual">
+              <label for="cisModeManual">Zadat CIS ručně</label>
+            </div>
+          </div>
+
+          <!-- B) Model FVE/BESS -->
+          <div id="modelBlock" style="margin-top:12px;">
+            <div class="row">
+              <div>
+                <label for="fveKwp">FVE výkon (kWp)</label>
+                <input id="fveKwp" type="number" inputmode="decimal" min="0" step="0.1" placeholder="např. 500" />
+              </div>
+              <div>
+                <label for="bessKwh">BESS kapacita (kWh)</label>
+                <input id="bessKwh" type="number" inputmode="decimal" min="0" step="0.1" placeholder="např. 1200" />
+              </div>
+            </div>
+            <div class="row" style="margin-top:12px;">
+              <div>
+                <label for="balancePct">Rezerva na balance-of-plant (%)</label>
+                <input id="balancePct" type="number" inputmode="decimal" min="0" step="0.5" value="0" />
+              </div>
+            </div>
+
+            <details style="margin-top:12px;">
+              <summary>Jednotkové ceny (volitelně upravitelné)</summary>
+              <div class="grid-3" style="margin-top:12px;">
+                <div>
+                  <label for="cFveKwp">Cena FVE za 1 kWp (Kč)</label>
+                  <input id="cFveKwp" type="number" inputmode="numeric" min="0" step="100" value="28000" />
+                </div>
+                <div>
+                  <label for="cBessFixed">BESS fixní část (Kč)</label>
+                  <input id="cBessFixed" type="number" inputmode="numeric" min="0" step="50000" value="5000000" />
+                </div>
+                <div>
+                  <label for="cBessKwh">BESS variabilní (Kč/kWh)</label>
+                  <input id="cBessKwh" type="number" inputmode="numeric" min="0" step="50" value="3000" />
+                </div>
+              </div>
+              <div class="muted" style="margin-top:6px">Pozn.: FVE zůstává lineárně dle kWp. BESS je modelován jako
+                fixní část + variabilní Kč/kWh. Balance‑of‑plant (trafostanice, kabeláž, konstrukce…) lze pokrýt
+                procentem výše.</div>
+            </details>
+          </div>
+
+          <!-- C) Ruční CIS -->
+          <div id="manualBlock" style="display:none;margin-top:12px;">
+            <div class="row">
+              <div>
+                <label for="cis">Celkové investiční náklady (CIS) – Kč (bez DPH)</label>
+                <input id="cis" type="number" inputmode="numeric" min="0" step="1000" placeholder="např. 10000000" />
+              </div>
+              <div>
+                <label for="type">Typ stavby</label>
+                <div class="stack">
+                  <select id="type"></select>
+                  <button class="btn" id="addType">+ Nový typ</button>
+                </div>
               </div>
             </div>
           </div>
 
+          <!-- D) Společné: typ + sazby -->
           <div class="row" style="margin-top:12px;">
+            <div>
+              <label for="type2">Typ stavby</label>
+              <div class="stack">
+                <select id="type2"></select>
+                <button class="btn" id="addType2">+ Nový typ</button>
+              </div>
+            </div>
             <div>
               <label for="coef">Složitost / náročnost (koeficient)</label>
               <input id="coef" type="number" inputmode="decimal" step="0.05" min="0.5" max="2" value="1" />
               <div class="muted">0,8 = jednodušší | 1,0 = běžná | 1,2 = složitější</div>
             </div>
-            <div>
-              <label for="reserve">Režie / rezerva (%) – volitelné</label>
-              <input id="reserve" type="number" inputmode="decimal" step="0.5" min="0" max="50" value="0" />
-            </div>
           </div>
 
-          <div class="row" style="margin-top:12px;">
+          <div class="row align-start" style="margin-top:12px;">
             <div>
-              <label for="hourlyRate">Hodinová sazba (Kč/h) – pro kontrolní výpočet</label>
-              <input id="hourlyRate" type="number" inputmode="numeric" min="0" step="50" placeholder="např. 1200" />
-              <div class="muted">Zadej svou firemní/UNIKA sazbu. Uloží se k typu.</div>
+              <label>Hodinová sazba
+                <span class="muted">(UNIKA / Vlastní)</span>
+              </label>
+              <div class="inline-options">
+                <div class="switch">
+                  <input type="radio" name="rateMode" id="rateUnika" value="unika" checked>
+                  <label for="rateUnika">UNIKA</label>
+                </div>
+                <div class="switch">
+                  <input type="radio" name="rateMode" id="rateCustom" value="custom">
+                  <label for="rateCustom">Vlastní</label>
+                </div>
+                <input id="hourlyRate" type="number" inputmode="numeric" min="0" step="50" placeholder="např. 1200"
+                  disabled />
+              </div>
+              <div class="muted">V režimu UNIKA je hodinovka řízena typem stavby (viz konstanty). V režimu Vlastní lze
+                přepsat.</div>
             </div>
             <div>
-              <label for="hourlyCoef">Koeficient profese (volitelně)
+              <label for="hourlyCoef">Koeficient profese
                 <span class="help-badge" tabindex="0">?
                   <span class="help-tip">
                     Koeficient násobí hodinovou sazbu podle seniority/typu práce:
@@ -452,9 +465,8 @@
                   </span>
                 </span>
               </label>
-
               <input id="hourlyCoef" type="number" inputmode="decimal" step="0.05" min="0.5" max="2" value="1" />
-              <div class="muted">Např. 1,0 = základ, 1,2 = senior/urgentní.</div>
+              <div class="muted">viz: help-tip (?)</div>
             </div>
           </div>
 
@@ -462,39 +474,40 @@
 
           <details>
             <summary>Procenta podle stupňů PD (upravte dle potřeby)</summary>
-            <div class="table-wrap">
-              <table class="table" id="stagesTable">
-                <thead>
-                  <tr>
-                    <th>Stupeň</th>
-                    <th class="right">Podíl z CIS (%)</th>
-                    <th class="right">Zahrnout</th>
-                  </tr>
-                </thead>
-                <tbody id="stagesBody"></tbody>
-              </table>
-            </div>
-            <div class="footnote">Tip: Procenta jsou výchozí pro zvolený typ, ale můžete je kdykoli přepsat.</div>
+            <table class="table" id="stagesTable">
+              <thead>
+                <tr>
+                  <th>Stupeň</th>
+                  <th class="right">Podíl z CIS (%)</th>
+                  <th class="right">Zahrnout</th>
+                </tr>
+              </thead>
+              <tbody id="stagesBody"></tbody>
+            </table>
+            <div class="footnote">Tip: Procenta jsou výchozí pro zvolený typ, ale můžete je kdykoli přepsat. Tlačítkem
+              níže je uložíte jako výchozí.</div>
           </details>
 
           <div class="hr"></div>
 
           <div class="stack">
             <button class="btn primary" id="calculate">Spočítat</button>
-            <button class="btn primary" id="printOffer">Tisk / PDF nabídka</button>
-            <button class="btn" id="saveDefaults">Uložit aktuální % pro tento typ</button>
+            <button class="btn" id="printOffer">Tisk / PDF nabídka</button>
+            <button class="btn" id="saveDefaults">Uložit aktuální % a sazby</button>
             <button class="btn" id="resetConfig">Obnovit výchozí</button>
-            <span class="notice">Výsledky se počítají průběžně, nebo po kliknutí na „Spočítat”.</span>
+            <span class="notice">Výsledky se přepočítávají průběžně.</span>
           </div>
         </section>
 
         <!-- RIGHT: Output -->
         <section class="card">
           <h3 style="margin-top:0">Výsledky</h3>
+
           <div class="kpi">
             <div class="item">
               <div class="muted">CIS (bez DPH)</div>
               <div class="value" id="kpiCis">–</div>
+              <div class="muted" id="kpiCisNote"></div>
             </div>
             <div class="item">
               <div class="muted">Koeficient × rezerva</div>
@@ -506,36 +519,37 @@
             </div>
           </div>
 
-          <div class="table-wrap">
-            <table class="table" style="margin-top:16px;" id="resultTable">
-              <thead>
-                <tr>
-                  <th>Stupeň</th>
-                  <th class="right nowrap">% z CIS</th>
-                  <th class="right nowrap">Cena % (Kč)</th>
-                  <th class="right nowrap">Hodinový limit (h)</th>
-                </tr>
-              </thead>
-              <tbody id="resultBody"></tbody>
-              <tfoot>
-                <tr>
-                  <th class="right" colspan="2">Součet</th>
-                  <th class="right total" id="resultSum">–</th>
-                  <th class="right total" id="resultHours">–</th>
-                </tr>
-              </tfoot>
-            </table>
-          </div>
+          <table class="table" style="margin-top:16px;" id="resultTable">
+            <thead>
+              <tr>
+                <th>Stupeň</th>
+                <th class="right nowrap">% z CIS</th>
+                <th class="right nowrap">Cena % (Kč)</th>
+                <th class="right nowrap">Hodinový limit (h)</th>
+              </tr>
+            </thead>
+            <tbody id="resultBody"></tbody>
+            <tfoot>
+              <tr>
+                <th class="right" colspan="2">Součet</th>
+                <th class="right total" id="resultSum">–</th>
+                <th class="right total" id="resultHours">–</th>
+              </tr>
+            </tfoot>
+          </table>
 
           <div class="hr"></div>
 
-          <div class="muted">Pozn.: Jde o orientační odhad dle procenta z CIS. Skutečná cena závisí na zadání, rozsahu
-            profese, koordinaci, termínech atd.</div>
+          <div class="muted">
+            Pozn.: Jde o orientační odhad dle procenta z CIS. Skutečná cena závisí na rozsahu, BIM koordinaci, termínech
+            apod.
+          </div>
         </section>
       </div>
     </div>
   </div>
 
+  <!-- Dialog Nový typ -->
   <template id="typeDialogTpl">
     <div class="card"
       style="position:fixed; inset:0; margin:auto; width:min(560px,92vw); height:auto; z-index:50; border:1px solid #334155;">
@@ -567,20 +581,21 @@
     </div>
   </template>
 
+  <footer style="margin-top:40px; text-align:center; font-size:12px; color:#94a3b8;">
+    <span id="appVer"></span> – ©Nolzak <span id="year"></span> PD kalkulačka
+  </footer>
+
   <script>
     // ---------- Helpers ----------
-    const fmtCZK = (n) => new Intl.NumberFormat('cs-CZ', { style: 'currency', currency: 'CZK', maximumFractionDigits: 0 }).format(n || 0);
-    const fmtPct = (n) => `${(n ?? 0).toLocaleString('cs-CZ', { maximumFractionDigits: 2 })}%`;
+    const APP_VER = '1.1.1';
     const el = (id) => document.getElementById(id);
     const num = (v) => parseFloat(String(v).replace(',', '.')) || 0;
-    let __calcTimer = null;
-    function recalcDebounced() {
-      clearTimeout(__calcTimer);
-      __calcTimer = setTimeout(calculate, 500);
-    }
-    const APP_VER = '1.0.2';
+    const fmtCZK = (n) => new Intl.NumberFormat('cs-CZ', { style: 'currency', currency: 'CZK', maximumFractionDigits: 0 }).format(n || 0);
 
-    // ---------- Config (defaults + localStorage) ----------
+    let __calcTimer = null;
+    const recalcDebounced = () => { clearTimeout(__calcTimer); __calcTimer = setTimeout(calculate, 300); };
+
+    // ---------- Konfigurace (stupně PD) ----------
     const STAGES = [
       { key: 'STU', name: 'Studie / návrh' },
       { key: 'DUR', name: 'Dokumentace pro územní řízení (DUR)' },
@@ -589,46 +604,97 @@
       { key: 'AD', name: 'Autorský dozor (AD)' },
     ];
 
-    const DEFAULTS = {
-      'RD': { label: 'Rodinný dům (RD)', perc: { STU: 0, DUR: 0, DSP: 0, DPS: 1.8, AD: 0.5 }, rate: 750 },
-      'BD': { label: 'Bytový dům (BD)', perc: { STU: 0.6, DUR: 0.6, DSP: 1.4, DPS: 2.0, AD: 0.5 }, rate: 750 },
-      'PRU': { label: 'Průmyslový objekt', perc: { STU: 0.4, DUR: 0.5, DSP: 1.0, DPS: 1.8, AD: 0.4 }, rate: 1200 },
-      'BESS': { label: 'BESS (bateriové úložiště)', perc: { STU: 0.3, DUR: 0.6, DSP: 1.1, DPS: 1.5, AD: 0.4 }, rate: 1200 },
+    // UNIKA sazby podle typu
+    const UNIKA_RATES = {
+      'RD': 700,
+      'BD': 700,
+      'PRU': 1200,
+      'BESS': 1200,
     };
-    const LS_KEY = 'pd_calc_config_v1';
 
+    // Výchozí typy a procenta
+    const DEFAULTS = {
+      'RD': { label: 'Rodinný dům (RD)', perc: { STU: 0.5, DUR: 0.0, DSP: 1.2, DPS: 1.6, AD: 0.4 }, rateMode: 'unika', rateCustom: 700 },
+      'BD': { label: 'Bytový dům (BD)', perc: { STU: 0.6, DUR: 0.6, DSP: 1.4, DPS: 2.0, AD: 0.5 }, rateMode: 'unika', rateCustom: 700 },
+      'PRU': { label: 'Průmyslový objekt', perc: { STU: 0.4, DUR: 0.5, DSP: 1.0, DPS: 1.8, AD: 0.4 }, rateMode: 'unika', rateCustom: 1200 },
+      'BROWN': { label: 'Brownfield', perc: { STU: 0.4, DUR: 0.5, DSP: 1.2, DPS: 1.8, AD: 0.4 }, rateMode: 'unika', rateCustom: 1200 },
+      'BESS': { label: 'BESS', perc: { STU: 0.3, DUR: 0.5, DSP: 0.9, DPS: 1.5, AD: 0.2 }, rateMode: 'unika', rateCustom: 1200 },
+    };
+
+    // Jednotkové ceny — startovní defaults
+    const DEFAULT_UNIT_COSTS = {
+      cFveKwp: 28000,
+      cBessFixed: 5000000,
+      cBessKwh: 3000,
+      balancePct: 0
+    };
+
+    const LS_KEY = 'pd_calc_config_v110'; // nový klíč pro v1.1.0
+
+    // ---------- Local storage ----------
     function loadConfig() {
       try {
         const raw = localStorage.getItem(LS_KEY);
-        if (!raw) return structuredClone(DEFAULTS);
+        const base = {
+          types: structuredClone(DEFAULTS),
+          // per-user poslední volby
+          last: {
+            typeKey: 'BESS',
+            rateMode: 'unika',
+            cisMode: 'model',
+            unitCosts: structuredClone(DEFAULT_UNIT_COSTS),
+            modelParams: { fveKwp: 0, bessKwh: 0 }
+          }
+        };
+        if (!raw) return base;
         const cfg = JSON.parse(raw);
-        // merge defaults for any missing keys
+        // doplnit případné chybějící typy
         for (const k of Object.keys(DEFAULTS)) {
-          if (!cfg[k]) cfg[k] = structuredClone(DEFAULTS[k]);
+          if (!cfg.types[k]) cfg.types[k] = structuredClone(DEFAULTS[k]);
+          // merge starých typů s novými properties
+          cfg.types[k].rateMode ??= 'unika';
+          cfg.types[k].rateCustom ??= UNIKA_RATES[k] || 1200;
         }
+        cfg.last ??= base.last;
+        cfg.last.unitCosts = { ...DEFAULT_UNIT_COSTS, ...(cfg.last.unitCosts || {}) };
         return cfg;
-      } catch (e) { return structuredClone(DEFAULTS); }
+      } catch (e) {
+        return { types: structuredClone(DEFAULTS), last: { typeKey: 'BESS', rateMode: 'unika', cisMode: 'model', unitCosts: structuredClone(DEFAULT_UNIT_COSTS), modelParams: { fveKwp: 0, bessKwh: 0 } } };
+      }
     }
     function saveConfig(cfg) { localStorage.setItem(LS_KEY, JSON.stringify(cfg)); }
 
     let CONFIG = loadConfig();
 
     // ---------- UI populate ----------
-    function populateTypeSelect() {
-      const sel = el('type');
-      sel.innerHTML = '';
-      for (const [key, obj] of Object.entries(CONFIG)) {
-        const opt = document.createElement('option');
-        opt.value = key; opt.textContent = obj.label; sel.appendChild(opt);
+    function populateTypeSelects() {
+      const s1 = el('type');   // ruční blok (je skrytý podle režimu)
+      const s2 = el('type2');  // společný blok
+      const entries = Object.entries(CONFIG.types);
+      const fill = (sel) => {
+        sel.innerHTML = '';
+        for (const [key, obj] of entries) {
+          const opt = document.createElement('option');
+          opt.value = key; opt.textContent = obj.label;
+          sel.appendChild(opt);
+        }
+      };
+      fill(s1); fill(s2);
+      // nastavit poslední zvolený
+      if (CONFIG.last?.typeKey && CONFIG.types[CONFIG.last.typeKey]) {
+        s1.value = CONFIG.last.typeKey;
+        s2.value = CONFIG.last.typeKey;
+      } else {
+        s1.selectedIndex = 0; s2.selectedIndex = 0;
+        CONFIG.last.typeKey = s2.value;
       }
-      // default to first
-      if (!sel.value) { sel.selectedIndex = 0; }
     }
 
     function buildStagesTable() {
       const tbody = el('stagesBody');
       tbody.innerHTML = '';
-      const current = CONFIG[el('type').value];
+      const typeKey = getTypeKey();
+      const current = CONFIG.types[typeKey];
 
       for (const st of STAGES) {
         const tr = document.createElement('tr');
@@ -648,12 +714,21 @@
         tbody.appendChild(tr);
       }
 
-      // dosadit výchozí hodinovku a vybudovat tabulku hodin
-      const currentRate = CONFIG[el('type').value]?.rate;
-      el('hourlyRate').value = (currentRate != null && !Number.isNaN(currentRate))
-        ? currentRate
-        : (el('hourlyRate').value || 1200);
+      // hodinovka – režim
+      const { rateMode, rateCustom } = current;
+      if (rateMode === 'custom') {
+        el('rateCustom').checked = true;
+        el('hourlyRate').disabled = false;
+        el('hourlyRate').value = rateCustom || '';
+      } else {
+        el('rateUnika').checked = true;
+        el('hourlyRate').disabled = true;
+        el('hourlyRate').value = getUnikaRate(typeKey);
+      }
     }
+
+    function getTypeKey() { return el('type2').value || el('type').value; }
+    function setTypeKey(key) { if (el('type')) el('type').value = key; if (el('type2')) el('type2').value = key; CONFIG.last.typeKey = key; }
 
     function gatherPercents() {
       const rows = el('stagesBody').querySelectorAll('tr');
@@ -662,23 +737,64 @@
         const pct = num(r.querySelector('input[type="number"]').value || '0');
         const stage = r.querySelector('input[type="number"]').dataset.stage;
         const on = r.querySelector('input[type="checkbox"]').checked;
-        out[stage] = pct;
-        include[stage] = on;
+        out[stage] = pct; include[stage] = on;
       });
       return { perc: out, include };
     }
 
+    function getUnikaRate(typeKey) {
+      return UNIKA_RATES[typeKey] ?? 1200;
+    }
+
+    function getRateForCalc() {
+      const typeKey = getTypeKey();
+      const t = CONFIG.types[typeKey];
+      if (t.rateMode === 'custom') {
+        return num(t.rateCustom);
+      }
+      return getUnikaRate(typeKey);
+    }
+
+    function currentCIS() {
+      const cisMode = getCisMode();
+      if (cisMode === 'manual') {
+        const cis = num(el('cis').value);
+        return { value: cis, note: 'Ručně zadáno' };
+      }
+      // model
+      const kWp = num(el('fveKwp').value);
+      const kWh = num(el('bessKwh').value);
+      const cFVE = num(el('cFveKwp').value);
+      const cKWh = num(el('cBessKwh').value);
+      const bal = num(el('balancePct').value);
+
+      const fixed = num(el('cBessFixed').value);
+      const priceBess = fixed + (kWh * cKWh);
+      const base = kWp * cFVE + priceBess;
+      const cis = base * (1 + bal / 100);
+      let note = `Odhad: FVE ${kWp || 0} kWp × ${fmtCZK(cFVE)} + BESS: ${fmtCZK(fixed)} + ${kWh || 0} kWh × ${fmtCZK(cKWh)}${bal ? ` + ${bal}% BoP` : ''}`;
+      return { value: cis, note };
+    }
+
+    function getCisMode() {
+      return (el('cisModeManual').checked) ? 'manual' : 'model';
+    }
+
     function calculate() {
-      const cis = num(el('cis').value);
+      const { perc, include } = gatherPercents();
+      const typeKey = getTypeKey();
+
+      const cisObj = currentCIS();
+      const cis = cisObj.value;
+
       const coef = num(el('coef').value);
-      const reserve = num(el('reserve').value);
-      const hourlyRate = num(el('hourlyRate').value);
+      const reserve = 0; // teď nepoužíváme zvláštní rezervu mimo BoP, případně lze vrátit pole
+      const hourlyRate = getRateForCalc();
       const hourlyCoef = num(el('hourlyCoef').value);
 
-      const { perc, include } = gatherPercents();
-
+      // výsledky
       const resultBody = el('resultBody'); resultBody.innerHTML = '';
-      let totalPercent = 0, totalHours = 0;
+      let totalPrice = 0, totalHours = 0;
 
       for (const st of STAGES) {
         const p = (include[st.key] ? (perc[st.key] || 0) : 0);
@@ -686,35 +802,35 @@
         const hoursBudget = (hourlyRate > 0 && hourlyCoef > 0) ? (pricePercent / (hourlyRate * hourlyCoef)) : 0;
 
         if (include[st.key] && p > 0) {
-          totalPercent += pricePercent;
+          totalPrice += pricePercent;
           totalHours += hoursBudget;
         }
 
         const tr = document.createElement('tr');
         tr.innerHTML = `
-      <td>${st.name}</td>
-      <td class="right">${(p).toLocaleString('cs-CZ', { maximumFractionDigits: 2 })}%</td>
-      <td class="right">${fmtCZK(pricePercent)}</td>
-      <td class="right">${hoursBudget.toLocaleString('cs-CZ', { maximumFractionDigits: 1 })}</td>`;
+          <td>${st.name}</td>
+          <td class="right">${p.toLocaleString('cs-CZ', { maximumFractionDigits: 2 })}%</td>
+          <td class="right">${fmtCZK(pricePercent)}</td>
+          <td class="right">${hoursBudget.toLocaleString('cs-CZ', { maximumFractionDigits: 1 })}</td>`;
         resultBody.appendChild(tr);
       }
 
-      // KPI + součty
+      // KPI
       el('kpiCis').textContent = fmtCZK(cis);
-      el('kpiCoef').textContent = `${coef.toLocaleString('cs-CZ', { maximumFractionDigits: 2 })} × ${(1 + reserve / 100).toLocaleString('cs-CZ', { maximumFractionDigits: 2 })}`;
-      el('kpiTotal').textContent = fmtCZK(totalPercent);
-
-      el('resultSum').textContent = fmtCZK(totalPercent);
+      el('kpiCisNote').textContent = cisObj.note || '';
+      el('kpiCoef').textContent = `${coef.toLocaleString('cs-CZ', { maximumFractionDigits: 2 })} × ${hourlyCoef.toLocaleString('cs-CZ', { maximumFractionDigits: 2 })} (${CONFIG.types[typeKey].rateMode === 'unika' ? 'UNIKA' : 'Vlastní'}: ${fmtCZK(hourlyRate)}/h)`;
+      el('kpiTotal').textContent = fmtCZK(totalPrice);
+      el('resultSum').textContent = fmtCZK(totalPrice);
       el('resultHours').textContent = totalHours.toLocaleString('cs-CZ', { maximumFractionDigits: 1 });
     }
 
-    function openNewTypeDialog() {
+    function openNewTypeDialog(targetSelectId) {
       const tpl = el('typeDialogTpl');
       const node = tpl.content.cloneNode(true);
       document.body.appendChild(node);
-      const dlg = document.body.lastElementChild; // the inserted card
-      const tbody = dlg.querySelector('#newTypePerc');
-      tbody.innerHTML = '';
+      const dlg = document.body.lastElementChild;
+      const tbody = dlg.querySelector('#newTypePerc'); tbody.innerHTML = '';
+
       for (const st of STAGES) {
         const tr = document.createElement('tr');
         tr.innerHTML = `<td>${st.name}</td><td class="right"><input type="number" step="0.1" min="0" max="100" value="0" data-stage="${st.key}"/></td>`;
@@ -727,131 +843,209 @@
         const key = name.toUpperCase().normalize('NFD').replace(/[^A-Z0-9]+/g, '').slice(0, 6) || `TYP${Math.random().toString(36).slice(2, 6)}`;
         const perc = {};
         dlg.querySelectorAll('input[data-stage]').forEach(i => perc[i.dataset.stage] = num(i.value || '0'));
-        CONFIG[key] = { label: name, perc };
+        CONFIG.types[key] = { label: name, perc, rateMode: 'unika', rateCustom: 1200 };
         saveConfig(CONFIG);
-        populateTypeSelect();
-        el('type').value = key;
+        populateTypeSelects();
+        setTypeKey(key);
         buildStagesTable();
         calculate();
         dlg.remove();
       };
     }
 
-    // ---------- Event wiring ----------
-    window.addEventListener('DOMContentLoaded', () => {
-      populateTypeSelect();
+    function syncTypeSelects(e) {
+      const key = e.target.value;
+      setTypeKey(key);
       buildStagesTable();
       calculate();
+    }
 
-      el('type').addEventListener('change', () => { buildStagesTable(); calculate(); });
-      el('cis').addEventListener('input', () => {/* passive until click calc */ });
-      el('coef').addEventListener('input', () => {/* passive */ });
-      el('reserve').addEventListener('input', () => {/* passive */ });
-      el('stagesBody').addEventListener('input', (e) => { if (e.target.matches('input')) {/* passive */ } });
+    function onRateModeChange() {
+      const typeKey = getTypeKey();
+      const t = CONFIG.types[typeKey];
+      const mode = el('rateCustom').checked ? 'custom' : 'unika';
+      t.rateMode = mode;
+      if (mode === 'custom') {
+        el('hourlyRate').disabled = false;
+        // ponechat uložený rateCustom, nebo vyplnit aktuální hodnotu
+      } else {
+        el('hourlyRate').disabled = true;
+        el('hourlyRate').value = getUnikaRate(typeKey);
+      }
+      saveConfig(CONFIG);
+      calculate();
+    }
+
+    function onHourlyRateInput() {
+      const typeKey = getTypeKey();
+      const t = CONFIG.types[typeKey];
+      t.rateCustom = num(el('hourlyRate').value);
+      saveConfig(CONFIG);
+      recalcDebounced();
+    }
+
+    function onCisModeChange() {
+      const mode = getCisMode();
+      CONFIG.last.cisMode = mode;
+      el('modelBlock').style.display = (mode === 'model') ? '' : 'none';
+      el('manualBlock').style.display = (mode === 'manual') ? '' : 'none';
+      saveConfig(CONFIG);
+      calculate();
+    }
+
+    function saveDefaults() {
+      const key = getTypeKey();
+      const { perc } = gatherPercents();
+      CONFIG.types[key].perc = perc;
+      // sazby
+      CONFIG.types[key].rateMode = el('rateCustom').checked ? 'custom' : 'unika';
+      if (CONFIG.types[key].rateMode === 'custom') {
+        CONFIG.types[key].rateCustom = num(el('hourlyRate').value);
+      }
+      // poslední volby (unit costs a model params)
+      CONFIG.last.unitCosts = {
+        cFveKwp: num(el('cFveKwp').value),
+        cBessFixed: num(el('cBessFixed').value),
+        cBessKwh: num(el('cBessKwh').value),
+        balancePct: num(el('balancePct').value)
+      };
+      CONFIG.last.modelParams = {
+        fveKwp: num(el('fveKwp').value),
+        bessKwh: num(el('bessKwh').value)
+      };
+      saveConfig(CONFIG);
+      alert('Uloženo jako výchozí pro tento typ a poslední nastavení.');
+    }
+    el('resetConfig').addEventListener('click', () => {
+      if (confirm('Smazat uložené nastavení a načíst nové výchozí hodnoty?')) {
+        localStorage.removeItem(LS_KEY);
+        CONFIG = loadConfig();
+        populateTypeSelects();
+        buildStagesTable();
+        calculate();
+      }
+    });
+
+    function printOffer() {
+      const typeKey = getTypeKey();
+      const typeLabel = CONFIG.types[typeKey]?.label || typeKey;
+
+      const { perc, include } = gatherPercents();
+      const cisObj = currentCIS();
+      const cis = cisObj.value;
+      const coef = num(el('coef').value);
+      const hourlyCoef = num(el('hourlyCoef').value);
+      const rateMode = CONFIG.types[typeKey].rateMode;
+      const hourlyRate = getRateForCalc();
+
+      let html = `<!doctype html><html lang="cs"><head><meta charset="utf-8"><title>Nabídka PD</title>
+        <style>
+          body{font-family:system-ui,Segoe UI,Roboto; margin:40px;}
+          h1{margin:0 0 6px;}
+          .muted{color:#475569}
+          table{width:100%; border-collapse:collapse; margin-top:16px}
+          th,td{border-bottom:1px solid #e2e8f0; padding:8px 6px; text-align:left}
+          tfoot th{text-align:right}
+          .right{text-align:right}
+          .total{font-weight:800}
+          .note{margin-top:10px; color:#475569; font-size:12px}
+        </style></head><body>`;
+
+      html += `<h1>Nabídka – projektová dokumentace</h1>`;
+      html += `<div class="muted">Typ: <b>${typeLabel}</b> | CIS: <b>${fmtCZK(cis)}</b> | Koef.: <b>${coef}</b> | Koef. profese: <b>${hourlyCoef}</b></div>`;
+      html += `<div class="muted">Sazba: <b>${rateMode === 'unika' ? 'UNIKA' : 'Vlastní'}</b> (${fmtCZK(hourlyRate)}/h)${cisObj.note ? ` | ${cisObj.note}` : ''}</div>`;
+
+      html += `<table><thead>
+        <tr>
+          <th>Stupeň</th>
+          <th class='right'>% z CIS</th>
+          <th class='right'>Cena (Kč)</th>
+          <th class='right'>Hodinový limit (h)</th>
+        </tr>
+      </thead><tbody>`;
+
+      let sum = 0, sumHours = 0;
+      for (const st of STAGES) {
+        if (!include[st.key]) continue;
+        const p = perc[st.key] || 0;
+        const price = cis * (p / 100) * coef;
+        const hours = (hourlyRate > 0 && hourlyCoef > 0) ? (price / (hourlyRate * hourlyCoef)) : 0;
+        sum += price; sumHours += hours;
+        html += `<tr>
+          <td>${st.name}</td>
+          <td class='right'>${p.toLocaleString('cs-CZ', { maximumFractionDigits: 2 })}%</td>
+          <td class='right'>${fmtCZK(price)}</td>
+          <td class='right'>${hours.toLocaleString('cs-CZ', { maximumFractionDigits: 1 })}</td>
+        </tr>`;
+      }
+      html += `</tbody><tfoot>
+        <tr>
+          <th class='right' colspan='2'>Součet</th>
+          <th class='right total'>${fmtCZK(sum)}</th>
+          <th class='right total'>${sumHours.toLocaleString('cs-CZ', { maximumFractionDigits: 1 })}</th>
+        </tr>
+      </tfoot></table>`;
+
+      html += `<p class='note'>Pozn.: Orientační nabídka bez DPH. Platnost 14 dní, pokud není uvedeno jinak.</p>`;
+      html += `</body></html>`;
+
+      const w = window.open('about:blank', '_blank');
+      if (!w) { alert('Prohlížeč zablokoval nové okno. Povolit vyskakovací okna pro tuto stránku.'); return; }
+      w.document.open(); w.document.write(html); w.document.close();
+      w.onload = () => { w.focus(); w.print(); };
+    }
+
+    // ---------- Init ----------
+    window.addEventListener('DOMContentLoaded', () => {
       el('appVer').textContent = `Verze ${APP_VER}`;
       el('year').textContent = new Date().getFullYear();
 
+      // Naplnit selecty
+      populateTypeSelects();
+      buildStagesTable();
+
+      // Nastavit poslední režimy/parametry
+      if (CONFIG.last?.cisMode === 'manual') { el('cisModeManual').checked = true; }
+      onCisModeChange(); // schová/ukáže bloky
+
+      // Jednotkové ceny a parametry modelu
+      const uc = CONFIG.last.unitCosts || DEFAULT_UNIT_COSTS;
+      el('cFveKwp').value = uc.cFveKwp;
+      el('cBessFixed').value = uc.cBessFixed;
+      el('cBessKwh').value = uc.cBessKwh;
+      el('balancePct').value = uc.balancePct ?? 0;
+
+      const mp = CONFIG.last.modelParams || { fveKwp: 0, bessKwh: 0 };
+      el('fveKwp').value = mp.fveKwp || '';
+      el('bessKwh').value = mp.bessKwh || '';
+
+      calculate();
+
+      // Eventy
+      el('type').addEventListener('change', syncTypeSelects);
+      el('type2').addEventListener('change', syncTypeSelects);
+      el('addType').addEventListener('click', () => openNewTypeDialog('type'));
+      el('addType2').addEventListener('click', () => openNewTypeDialog('type2'));
+
+      el('rateUnika').addEventListener('change', onRateModeChange);
+      el('rateCustom').addEventListener('change', onRateModeChange);
+      el('hourlyRate').addEventListener('input', onHourlyRateInput);
+
+      el('cisModeManual').addEventListener('change', onCisModeChange);
+      el('cisModeModel').addEventListener('change', onCisModeChange);
+
+      // přepočet při psaní
+      ['cis', 'coef', 'hourlyCoef', 'fveKwp', 'bessKwh', 'cFveKwp', 'cBessFixed', 'cBessKwh', 'balancePct']
+        .forEach(id => { const n = el(id); if (n) n.addEventListener('input', recalcDebounced); });
+
+      // procenta ve stupních
+      el('stagesBody').addEventListener('input', (e) => { if (e.target.matches('input')) recalcDebounced(); });
+
       el('calculate').addEventListener('click', calculate);
-      el('saveDefaults').addEventListener('click', () => {
-        const key = el('type').value;
-        const { perc } = gatherPercents();
-        CONFIG[key].perc = perc;
-        CONFIG[key].rate = num(el('hourlyRate').value);
-        saveConfig(CONFIG);
-        alert('Uloženo jako výchozí pro tento typ.');
-      });
-      el('resetConfig').addEventListener('click', () => {
-        if (confirm('Smazat uložené nastavení a načíst nové výchozí hodnoty?')) {
-          localStorage.removeItem(LS_KEY);
-          CONFIG = loadConfig();
-          populateTypeSelect();
-          buildStagesTable();
-          calculate();
-        }
-      });
-
-
-      el('addType').addEventListener('click', openNewTypeDialog);
-
-      el('printOffer').addEventListener('click', () => {
-        const cis = num(el('cis').value);
-        const coef = num(el('coef').value);
-        const reserve = num(el('reserve').value);
-        const typeLabel = CONFIG[el('type').value]?.label || el('type').value;
-        const { perc, include } = gatherPercents();
-        let html = `<!doctype html><html lang="cs"><head><meta charset="utf-8"><title>Nabídka PD</title>
-          <style>body{font-family:system-ui,Segoe UI,Roboto; margin:40px;} h1{margin:0 0 6px;} .muted{color:#475569}
-          table{width:100%; border-collapse:collapse; margin-top:16px} th,td{border-bottom:1px solid #e2e8f0; padding:8px 6px; text-align:left}
-          tfoot th{ text-align:right } .right{text-align:right} .total{font-weight:800}
-          </style></head><body>`;
-        html += `<h1>Nabídka – projektová dokumentace</h1>`;
-        html += `<div class="muted">Typ stavby: <b>${typeLabel}</b> | CIS: <b>${fmtCZK(cis)}</b> | Koef.: <b>${coef}</b> | Rezerva: <b>${reserve}%</b></div>`;
-        html += `<table><thead>
-  <tr>
-    <th>Stupeň</th>
-    <th class='right'>% z CIS</th>
-    <th class='right'>Cena % (Kč)</th>
-    <th class='right'>Hodinový limit (h)</th>
-  </tr>
-</thead><tbody>`;
-
-        let sum = 0;
-        let sumHours = 0;
-        for (const st of STAGES) {
-          if (!include[st.key]) continue;
-          const p = perc[st.key] || 0;
-          const price = cis * (p / 100) * coef * (1 + reserve / 100);
-          const hourlyRate = num(el('hourlyRate').value);
-          const hourlyCoef = num(el('hourlyCoef').value);
-          const hours = (hourlyRate > 0 && hourlyCoef > 0) ? (price / (hourlyRate * hourlyCoef)) : 0;
-          sum += price;
-          sumHours += hours;
-
-          html += `<tr>
-    <td>${st.name}</td>
-    <td class='right'>${p.toLocaleString('cs-CZ', { maximumFractionDigits: 2 })}%</td>
-    <td class='right'>${fmtCZK(price)}</td>
-    <td class='right'>${hours.toLocaleString('cs-CZ', { maximumFractionDigits: 1 })}</td>
-  </tr>`;
-        }
-
-        html += `</tbody>
-<tfoot>
-  <tr>
-    <th class='right' colspan='2'>Součet</th>
-    <th class='right total'>${fmtCZK(sum)}</th>
-    <th class='right total'>${sumHours.toLocaleString('cs-CZ', { maximumFractionDigits: 1 })}</th>
-  </tr>
-</tfoot></table>`;
-        html += `<p class='muted'>Pozn.: Orientační nabídka bez DPH. Platnost 14 dní, pokud není uvedeno jinak.</p>`;
-        html += `</body></html>`;
-        const w = window.open('about:blank', '_blank');
-        if (!w) {
-          alert('Prohlížeč zablokoval nové okno. Povolením vyskakovacího okna pro tuto stránku se otevře náhled nabídky.');
-          return;
-        }
-        w.document.open();
-        w.document.write(html);
-        w.document.close();
-        w.onload = () => { w.focus(); w.print(); };
-      });
-      // průběžný přepočet při psaní do hlavních vstupů
-      ['cis', 'coef', 'reserve', 'hourlyRate', 'hourlyCoef'].forEach(id => {
-        el(id).addEventListener('input', recalcDebounced);
-      });
-
-      // a i při editaci procent ve stupních
-      el('stagesBody').addEventListener('input', (e) => {
-        if (e.target.matches('input')) recalcDebounced();
-      });
-
+      el('saveDefaults').addEventListener('click', saveDefaults);
+      el('printOffer').addEventListener('click', printOffer);
     });
   </script>
-  <footer style="margin-top:40px; text-align:center; font-size:12px; color:#94a3b8;">
-    PD Kalkulačka <span id="appVer"></span> – ©<span id="year"></span> Nolzak
-  </footer>
 </body>
 
-
 </html>
-
