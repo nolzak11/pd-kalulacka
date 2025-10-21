@@ -1,5 +1,5 @@
 // ---------- Helpers ----------
-const APP_VER = '1.2.0'; // Nová verze
+const APP_VER = '1.3.0'; // Nová verze
 const el = (id) => document.getElementById(id);
 const num = (v) => parseFloat(String(v).replace(',', '.')) || 0;
 const fmtCZK = (n) => new Intl.NumberFormat('cs-CZ', { style: 'currency', currency: 'CZK', maximumFractionDigits: 0 }).format(n || 0);
@@ -28,100 +28,103 @@ const STAGES = [
   { key: 'AD', name: 'Autorský dozor (AD)' },
 ];
 
-// UNIKA sazby podle typu
 const UNIKA_RATES = {
-  'RD': 700,
-  'BD': 700,
-  'PRU': 1200,
-  'BESS': 1200,
-  'BROWN': 1200,
+  'RD': 700, 'BD': 700, 'PRU': 1200, 'BESS': 1200, 'BROWN': 1200,
 };
 
-// ZMĚNA ZDE: Nová struktura pro odstupňované (progresivní) ceny
+// Ceny FVE/BESS
 const BASE_UNIT_COSTS = {
   RD: {
-    cFveFixed: 80000,
-    cFveTiers: [ // Pro RD ponecháno lineární
-      { upTo: Infinity, price: 28000 } 
-    ],
-    cBessFixed: 0,
-    cBessTiers: [ // Pro RD ponecháno lineární
-      { upTo: Infinity, price: 15000 }
-    ],
+    cFveFixed: 50000, cFveTiers: [{ upTo: Infinity, price: 30000 }],
+    cBessFixed: 0, cBessTiers: [{ upTo: Infinity, price: 15000 }],
     balancePct: 0
   },
   BD: {
-    cFveFixed: 200000,
-    cFveTiers: [
-      { upTo: 50, price: 28000 }, // 0-50 kWp
-      { upTo: Infinity, price: 26000 } // 51+ kWp
-    ],
-    cBessFixed: 500000,
-    cBessTiers: [
-      { upTo: 100, price: 10000 }, // 0-100 kWh
-      { upTo: Infinity, price: 8000 }  // 101+ kWh
-    ],
+    cFveFixed: 50000, cFveTiers: [{ upTo: 50, price: 30000 }, { upTo: Infinity, price: 26000 }],
+    cBessFixed: 0, cBessTiers: [{ upTo: 100, price: 15000 }, { upTo: Infinity, price: 8000 }],
     balancePct: 0
   },
   PRU: {
-    cFveFixed: 1500000,
-    cFveTiers: [
-      { upTo: 100, price: 30000 },      // 0-100 kWp
-      { upTo: 500, price: 28000 },      // 101-500 kWp
-      { upTo: 2000, price: 26000 },     // 501-2000 kWp
-      { upTo: Infinity, price: 24000 }  // 2001+ kWp
-    ],
-    cBessFixed: 3000000,
-    cBessTiers: [
-      { upTo: 500, price: 8000 },       // 0-500 kWh
-      { upTo: 2000, price: 6000 },      // 501-2000 kWh
-      { upTo: Infinity, price: 4500 }   // 2001+ kWh
-    ],
+    cFveFixed: 500000, cFveTiers: [{ upTo: 100, price: 24000 }, { upTo: 500, price: 22000 }, { upTo: 2000, price: 15000 }, { upTo: Infinity, price: 15000 }],
+    cBessFixed: 3000000, cBessTiers: [{ upTo: 500, price: 8000 }, { upTo: 2000, price: 6000 }, { upTo: Infinity, price: 4500 }],
     balancePct: 0
   },
-  // Ostatní typy kopírují PRU, můžeš si je upravit
   BESS: {
-    cFveFixed: 0,
-    cFveTiers: [], // Žádná FVE
-    cBessFixed: 3000000,
-    cBessTiers: [
-      { upTo: 500, price: 8000 },
-      { upTo: 2000, price: 6000 },
-      { upTo: Infinity, price: 4500 }
-    ],
+    cFveFixed: 0, cFveTiers: [],
+    cBessFixed: 1000000, cBessTiers: [{ upTo: 500, price: 6500 }, { upTo: 2000, price: 4500 }, { upTo: 50000, price: 3500 }, { upTo: 250000, price: 2500 }, { upTo: Infinity, price: 2000 }],
     balancePct: 0
   },
   BROWN: {
-    cFveFixed: 1500000,
-    cFveTiers: [
-      { upTo: 100, price: 30000 },
-      { upTo: 500, price: 28000 },
-      { upTo: 2000, price: 26000 },
-      { upTo: Infinity, price: 24000 }
-    ],
-    cBessFixed: 3000000,
-    cBessTiers: [
-      { upTo: 500, price: 8000 },
-      { upTo: 2000, price: 6000 },
-      { upTo: Infinity, price: 4500 }
-    ],
+    cFveFixed: 3500000, cFveTiers: [{ upTo: 100, price: 24000 }, { upTo: 500, price: 22000 }, { upTo: 2000, price: 15000 },  { upTo: 10000, price: 13000 }, { upTo: 20000, price: 12000 }, { upTo: Infinity, price: 10000 }],
+    cBessFixed: 3000000, cBessTiers: [{ upTo: 500, price: 8000 }, { upTo: 2000, price: 6000 }, { upTo: Infinity, price: 4500 }],
     balancePct: 0
   },
 };
 
-// Výchozí typy a procenta
+// VÝCHOZÍ NASTAVENÍ TYPŮ
 const DEFAULTS = {
-  'RD': { label: 'Rodinný dům (RD)', perc: { STU: 0.0, DUR: 0.0, DSP: 0.0, DPS: 3.3, AD: 0.4 }, rateMode: 'unika', rateCustom: 700, unitCosts: BASE_UNIT_COSTS.RD },
-  'BD': { label: 'Bytový dům (BD)', perc: { STU: 0.6, DUR: 0.6, DSP: 1.4, DPS: 2.0, AD: 0.5 }, rateMode: 'unika', rateCustom: 700, unitCosts: BASE_UNIT_COSTS.BD },
-  'PRU': { label: 'Průmyslový objekt', perc: { STU: 0.4, DUR: 0.5, DSP: 1.0, DPS: 1.8, AD: 0.4 }, rateMode: 'unika', rateCustom: 1200, unitCosts: BASE_UNIT_COSTS.PRU },
-  'BROWN': { label: 'Brownfield', perc: { STU: 0.4, DUR: 0.5, DSP: 1.2, DPS: 1.8, AD: 0.4 }, rateMode: 'unika', rateCustom: 1200, unitCosts: BASE_UNIT_COSTS.BROWN },
-  'BESS': { label: 'BESS (samostatná)', perc: { STU: 0.3, DUR: 0.5, DSP: 0.9, DPS: 1.5, AD: 0.2 }, rateMode: 'unika', rateCustom: 1200, unitCosts: BASE_UNIT_COSTS.BESS },
+  'RD': {
+    label: 'Rodinný dům (RD)',
+    perc: { STU: 0.0, DUR: 0.0, DSP: 0.0, DPS: 3.3, AD: 0.0 }, // Poměry
+    rateMode: 'unika', rateCustom: 700,
+    unitCosts: BASE_UNIT_COSTS.RD,
+    pdPriceTiers: [ // Odstupňovaná cena PD (zde lineární)
+      { upTo: Infinity, price: 0.033 } // 3.7%
+    ]
+  },
+  'BD': {
+    label: 'Bytový dům (BD)',
+    perc: { STU: 0.5, DUR: 0.0, DSP: 0.0, DPS: 3.3, AD: 0.0 }, // Součet 3.8
+    rateMode: 'unika', rateCustom: 700,
+    unitCosts: BASE_UNIT_COSTS.BD,
+    pdPriceTiers: [
+      { upTo: 50000000, price: 0.038 }, // 3.8%
+      { upTo: Infinity, price: 0.025 } // 2.5%
+    ]
+  },
+  'PRU': {
+    label: 'Průmyslový objekt',
+    perc: { STU: 0.1, DUR: 0.35, DSP: 0.8, DPS: 1.5, AD: 0.3 }, // Součet 3.1
+    rateMode: 'unika', rateCustom: 1200,
+    unitCosts: BASE_UNIT_COSTS.PRU,
+    pdPriceTiers: [
+      { upTo: 50000000, price: 0.031 },   // 3.1%
+      { upTo: 200000000, price: 0.025 },  // 2.5%
+      { upTo: 1000000000, price: 0.020 }, // 2.0%
+      { upTo: Infinity, price: 0.015 }    // 1.5%
+    ]
+  },
+  'BESS': {
+    label: 'BESS (samostatná)',
+    perc: { STU: 0.1, DUR: 0.35, DSP: 0.8, DPS: 1.5, AD: 0.1 }, // Součet 2.85
+    rateMode: 'unika', rateCustom: 1200,
+    unitCosts: BASE_UNIT_COSTS.BESS,
+    pdPriceTiers: [
+      { upTo: 50000000, price: 0.029 },   // 2.85%
+      { upTo: 200000000, price: 0.021 },  // 2.1%
+      { upTo: 1000000000, price: 0.012 }, // 1.2%
+      { upTo: Infinity, price: 0.010 }    // 1.0%
+    ]
+  },
+  'BROWN': {
+    label: 'Brownfield',
+    perc: { STU: 0.2, DUR: 0.35, DSP: 1.0, DPS: 1.4, AD: 0.2 }, // Součet 3.15
+    rateMode: 'unika', rateCustom: 1200,
+    unitCosts: BASE_UNIT_COSTS.BROWN,
+    pdPriceTiers: [
+      { upTo: 50000000, price: 0.0315 },   // 3.15%
+      { upTo: 200000000, price: 0.025 },  // 2.5%
+      { upTo: 1000000000, price: 0.018 }, // 1.8%
+      { upTo: Infinity, price: 0.015 }    // 1.5%
+    ]
+  },
 };
 
 
-const LS_KEY = 'pd_calc_config_v120'; // NOVÝ KLÍČ pro v1.2.0 (důležité!)
+const LS_KEY = 'pd_calc_config_v130'; // NOVÝ KLÍČ pro v1.3.0
 
 // ---------- Local storage ----------
+// PŘEPSANÁ LOGIKA: Vždy bere 'pdPriceTiers' z DEFAULTS, ale zachová uživatelské 'perc' atd.
 function loadConfig() {
   try {
     const raw = localStorage.getItem(LS_KEY);
@@ -136,43 +139,53 @@ function loadConfig() {
     };
     if (!raw) return base;
     const cfg = JSON.parse(raw);
-    
-    // Sloučení konfigurace, zachování uživatelských dat
+
+    // Nový, robustnější merge
+    const mergedTypes = {};
     for (const k of Object.keys(DEFAULTS)) {
       if (!cfg.types[k]) {
-        // Nový typ, který uživatel nemá -> přidat
-        cfg.types[k] = structuredClone(DEFAULTS[k]);
+        // Uživatel tento typ nemá (nově přidaný), vezme se celý default
+        mergedTypes[k] = structuredClone(DEFAULTS[k]);
       } else {
-        // Starý typ -> sloučit (uživatelská data mají přednost, ale doplníme chybějící)
-        cfg.types[k].perc = { ...(DEFAULTS[k].perc || {}), ...(cfg.types[k].perc || {}) };
-        cfg.types[k].rateMode ??= DEFAULTS[k].rateMode;
-        cfg.types[k].rateCustom ??= DEFAULTS[k].rateCustom;
-        
-        // Sloučení unitCosts - prioritou jsou uživatelsky uložené FIXNÍ ČÁSTI
-        // Ale Tiers (sazby) se vezmou VŽDY z nových DEFAULTS
-        const userFixedCosts = {
-          cFveFixed: cfg.types[k].unitCosts?.cFveFixed,
-          cBessFixed: cfg.types[k].unitCosts?.cBessFixed,
-          balancePct: cfg.types[k].unitCosts?.balancePct
-        };
-        
-        cfg.types[k].unitCosts = { 
-          ...structuredClone(DEFAULTS[k].unitCosts), 
-          ...userFixedCosts 
-        };
-        
-        // Vyčistit staré variabilní klíče, pokud existují
-        delete cfg.types[k].unitCosts.cFveKwpVar;
-        delete cfg.types[k].unitCosts.cBessKwh;
+        // Typ existuje, sloučíme
+        const userType = cfg.types[k];
+        const defaultType = DEFAULTS[k];
+
+        mergedTypes[k] = structuredClone(defaultType); // Začneme s novým defaultem (hlavně kvůli 'pdPriceTiers')
+
+        // Přepíšeme hodnotami od uživatele
+        mergedTypes[k].perc = { ...defaultType.perc, ...userType.perc };
+        mergedTypes[k].rateMode = userType.rateMode ?? defaultType.rateMode;
+        mergedTypes[k].rateCustom = userType.rateCustom ?? defaultType.rateCustom;
+
+        // Přepíšeme fixní náklady z 'unitCosts'
+        if (userType.unitCosts) {
+          mergedTypes[k].unitCosts.cFveFixed = userType.unitCosts.cFveFixed ?? defaultType.unitCosts.cFveFixed;
+          mergedTypes[k].unitCosts.cBessFixed = userType.unitCosts.cBessFixed ?? defaultType.unitCosts.cBessFixed;
+          mergedTypes[k].unitCosts.balancePct = userType.unitCosts.balancePct ?? defaultType.unitCosts.balancePct;
+        }
       }
     }
-    cfg.last ??= base.last;
-    if (cfg.last.unitCosts) delete cfg.last.unitCosts;
-    
-    return cfg;
+    // Přidáme i typy, které si uživatel vytvořil sám a v DEFAULTS nejsou
+    for (const k of Object.keys(cfg.types)) {
+      if (!mergedTypes[k]) {
+        mergedTypes[k] = cfg.types[k];
+        // Pojistka, kdyby mu chyběly 'pdPriceTiers', dáme mu defaultní z PRU
+        mergedTypes[k].pdPriceTiers ??= structuredClone(DEFAULTS.PRU.pdPriceTiers);
+      }
+    }
+
+    base.types = mergedTypes;
+    base.last = { ...base.last, ...cfg.last };
+
+    return base;
   } catch (e) {
     console.error("Chyba při načítání konfigurace:", e);
-    return { types: structuredClone(DEFAULTS), last: { typeKey: 'PRU', rateMode: 'unika', cisMode: 'model', modelParams: { fveKwp: 0, bessKwh: 0 } } };
+    // V případě chyby vrátíme tvrdý default
+    return {
+      types: structuredClone(DEFAULTS),
+      last: { typeKey: 'PRU', rateMode: 'unika', cisMode: 'model', modelParams: { fveKwp: 0, bessKwh: 0 } }
+    };
   }
 }
 function saveConfig(cfg) { localStorage.setItem(LS_KEY, JSON.stringify(cfg)); }
@@ -181,28 +194,24 @@ let CONFIG = loadConfig();
 
 // ---------- UI populate ----------
 function populateTypeSelects() {
-  const s1 = el('type');
-  const s2 = el('type2');
+  const s1 = el('projectType');
   const entries = Object.entries(CONFIG.types);
-  const fill = (sel) => {
-    sel.innerHTML = '';
-    for (const [key, obj] of entries) {
-      const opt = document.createElement('option');
-      opt.value = key; opt.textContent = obj.label;
-      sel.appendChild(opt);
-    }
-  };
-  fill(s1); fill(s2);
+  s1.innerHTML = '';
+  for (const [key, obj] of entries) {
+    const opt = document.createElement('option');
+    opt.value = key; opt.textContent = obj.label;
+    s1.appendChild(opt);
+  }
+
   if (CONFIG.last?.typeKey && CONFIG.types[CONFIG.last.typeKey]) {
     s1.value = CONFIG.last.typeKey;
-    s2.value = CONFIG.last.typeKey;
   } else {
-    s1.selectedIndex = 0; s2.selectedIndex = 0;
-    CONFIG.last.typeKey = s2.value;
+    s1.selectedIndex = 0;
+    CONFIG.last.typeKey = s1.value;
   }
 }
 
-// Načte procenta, sazby a JEDNOTKOVÉ CENY
+// UPRAVENO: Volá i updateRatioSummary
 function populateTypeConfig(typeKey) {
   const tbody = el('stagesBody');
   tbody.innerHTML = '';
@@ -212,50 +221,67 @@ function populateTypeConfig(typeKey) {
     return;
   }
 
-  // 1. Procenta PD
+  // 1. Poměry (dříve procenta)
   for (const st of STAGES) {
     const tr = document.createElement('tr');
     tr.innerHTML = `
       <td>${st.name}</td>
       <td class="right"><input type="number" step="0.1" min="0" max="100" value="${current.perc[st.key] ?? 0}" data-stage="${st.key}"></td>
-      <td class="right"><input type="checkbox" data-stage="${st.key}" ${ (current.perc[st.key] ?? 0) > 0 ? 'checked' : '' }></td>
+      <td class="right"><input type="checkbox" data-stage="${st.key}" ${(current.perc[st.key] ?? 0) > 0 ? 'checked' : ''}></td>
     `;
     tbody.appendChild(tr);
   }
 
   // 2. Hodinová sazba
   const { rateMode, rateCustom } = current;
+  const hourlyRateEl = el('hourlyRate'); // Získáme element
   if (rateMode === 'custom') {
     el('rateCustom').checked = true;
-    el('hourlyRate').disabled = false;
-    el('hourlyRate').value = rateCustom || '';
+    hourlyRateEl.disabled = false;
+    hourlyRateEl.value = rateCustom || '';
+    hourlyRateEl.classList.add('input-primary'); // <-- PŘIDÁNO ZVÝRAZNĚNÍ
   } else {
     el('rateUnika').checked = true;
-    el('hourlyRate').disabled = true;
-    el('hourlyRate').value = getUnikaRate(typeKey);
+    hourlyRateEl.disabled = true;
+    hourlyRateEl.value = getUnikaRate(typeKey);
+    hourlyRateEl.classList.remove('input-primary'); // <-- PŘIDÁNO ODEBRÁNÍ ZVÝRAZNĚNÍ
   }
-  
+
   // 3. Jednotkové ceny (pouze FIXNÍ části)
-  const uc = current.unitCosts;
-  el('cFveFixed').value = uc.cFveFixed;
-  el('cBessFixed').value = uc.cBessFixed;
-  el('balancePct').value = uc.balancePct ?? 0;
+  el('balancePct').value = current.unitCosts.balancePct ?? 0;
+
+  // 4. Aktualizovat součet poměrů
+  updateRatioSummary();
 }
 
 
-function getTypeKey() { return el('type2').value || el('type').value; }
-function setTypeKey(key) { if (el('type')) el('type').value = key; if (el('type2')) el('type2').value = key; CONFIG.last.typeKey = key; }
+function getTypeKey() { return el('projectType').value; }
+function setTypeKey(key) {
+  el('projectType').value = key;
+  CONFIG.last.typeKey = key;
+}
 
 function gatherPercents() {
   const rows = el('stagesBody').querySelectorAll('tr');
   const out = {}; const include = {};
+  let totalRatio = 0;
   rows.forEach(r => {
     const pct = num(r.querySelector('input[type="number"]').value || '0');
     const stage = r.querySelector('input[type="number"]').dataset.stage;
     const on = r.querySelector('input[type="checkbox"]').checked;
-    out[stage] = pct; include[stage] = on;
+    out[stage] = pct;
+    include[stage] = on;
+    if (on) {
+      totalRatio += pct;
+    }
   });
-  return { perc: out, include };
+  return { perc: out, include, totalRatio };
+}
+
+// NOVÁ FUNKCE: Aktualizuje součet poměrů v UI
+function updateRatioSummary() {
+  const { totalRatio } = gatherPercents();
+  el('stagesTotalRatio').textContent = totalRatio.toLocaleString('cs-CZ', { maximumFractionDigits: 2 });
 }
 
 function getUnikaRate(typeKey) {
@@ -272,7 +298,6 @@ function getRateForCalc() {
   return getUnikaRate(typeKey);
 }
 
-// NOVÁ POMOCNÁ FUNKCE pro výpočet ceny z "daňových pásem"
 function calculateTieredPrice(quantity, tiers) {
   if (!tiers || tiers.length === 0) return 0;
   let totalCost = 0;
@@ -280,12 +305,14 @@ function calculateTieredPrice(quantity, tiers) {
 
   for (const tier of tiers) {
     if (quantity <= processedQty) {
-      break; 
+      break;
     }
-    
+
+    // Hranice tohoto stupně (např. 50M)
     const tierLimit = (tier.upTo === Infinity) ? Infinity : tier.upTo;
+    // Množství, které spadá do tohoto stupně
     const qtyInThisTier = Math.min(quantity - processedQty, tierLimit - processedQty);
-    
+
     if (qtyInThisTier > 0) {
       totalCost += qtyInThisTier * tier.price;
       processedQty += qtyInThisTier;
@@ -294,30 +321,26 @@ function calculateTieredPrice(quantity, tiers) {
   return totalCost;
 }
 
-// UPRAVENÁ FUNKCE pro výpočet CIS
-function currentCIS() {
+function currentInvestment() {
   const cisMode = getCisMode();
   const typeKey = getTypeKey();
   const typeConfig = CONFIG.types[typeKey] || DEFAULTS.PRU;
 
   if (cisMode === 'manual') {
-    const cis = num(el('cis').value);
-    return { totalValue: cis, priceFve: cis, priceBess: 0, note: 'Ručně zadáno' };
+    const investment = num(el('cis').value);
+    return { totalValue: investment, priceFve: investment, priceBess: 0, note: 'Ručně zadáno' };
   }
-  
-  // model
+
   const kWp = num(el('fveKwp').value);
   const kWh = num(el('bessKwh').value);
-  
-  // Načteme konfigurační data z UI (fixní) a z DEFAULTS (tiers)
-  const cFveFix = num(el('cFveFixed').value);
-  const cBessFix = num(el('cBessFixed').value);
+
+  const cFveFix = num(typeConfig.unitCosts.cFveFixed);
+  const cBessFix = num(typeConfig.unitCosts.cBessFixed);
   const bal = num(el('balancePct').value);
-  
+
   const fveTiers = typeConfig.unitCosts.cFveTiers;
   const bessTiers = typeConfig.unitCosts.cBessTiers;
 
-  // Základní ceny
   const priceFve_var = calculateTieredPrice(kWp, fveTiers);
   const priceBess_var = calculateTieredPrice(kWh, bessTiers);
 
@@ -328,13 +351,12 @@ function currentCIS() {
   const priceFve_final = priceFve_base * balFactor;
   const priceBess_final = priceBess_base * balFactor;
 
-  const totalCIS = priceFve_final + priceBess_final;
+  const totalInvestment = priceFve_final + priceBess_final;
 
-  // Poznámka pro KPI - zjednodušená
-  let note = `Odhad: FVE ${fmtCZK(priceFve_base)} + BESS ${fmtCZK(priceBess_base)}${bal ? ` + ${bal}% BoP` : ''}`;
+  let note = `Odhad: FVE ${fmtCZK(priceFve_base)} + BESS ${fmtCZK(priceBess_base)}${bal ? ` + ${bal}% ost.` : ''}`;
 
   return {
-    totalValue: totalCIS,
+    totalValue: totalInvestment,
     priceFve: priceFve_final,
     priceBess: priceBess_final,
     note: note
@@ -345,14 +367,15 @@ function getCisMode() {
   return (el('cisModeManual').checked) ? 'manual' : 'model';
 }
 
-// UPRAVENÁ FUNKCE - přidání varování
+// KOMPLETNĚ PŘEPSANÁ FUNKCE
 function calculate() {
-  const { perc, include } = gatherPercents();
+  const { perc, include, totalRatio } = gatherPercents();
   const typeKey = getTypeKey();
   if (!CONFIG.types[typeKey]) return;
+  const typeConfig = CONFIG.types[typeKey];
 
-  const cisObj = currentCIS();
-  const totalCIS = cisObj.totalValue;
+  const investmentObj = currentInvestment();
+  const totalInvestment = investmentObj.totalValue;
   let calculationBase = 0;
 
   // Varování
@@ -369,68 +392,78 @@ function calculate() {
     if (industrialTypes.includes(typeKey)) {
       const isTooSmall = (kWp > 0 && kWp < 50) || (kWh > 0 && kWh < 100);
       if (isTooSmall) {
-        warningText = 'Varování: Zadaný výkon/kapacita je velmi nízká pro "Průmyslový" typ. Výsledná CIS může být nerealisticky vysoká kvůli fixním nákladům.';
+        warningText = 'Varování: Zadaný výkon/kapacita je velmi nízká pro "Průmyslový" typ. Výsledná investice může být nerealisticky vysoká kvůli fixním nákladům.';
       }
     } else if (typeKey === 'RD') {
-      if (kWp > 50) {
-        warningText = 'Varování: Zadaný výkon FVE (> 50 kWp) je vysoký pro "Rodinný dům". Zvažte použití typu "Průmyslový objekt".';
-      }
-      if (kWh > 100) {
-        warningText = 'Varování: Zadaná kapacita BESS (> 100 kWh) je vysoká pro "Rodinný dům". Zvažte použití jiného typu.';
-      }
+      if (kWp > 50) warningText = 'Varování: Zadaný výkon FVE (> 50 kWp) je vysoký pro "Rodinný dům". Zvažte použití typu "Průmyslový objekt".';
+      if (kWh > 100) warningText = 'Varování: Zadaná kapacita BESS (> 100 kWh) je vysoká pro "Rodinný dům". Zvažte použití jiného typu.';
     }
-    
+
     if (warningText) {
       warningEl.textContent = warningText;
       warningEl.style.display = 'block';
     }
   }
 
-  // Základ výpočtu
+  // 1. Zjistíme základ pro výpočet PD
   if (typeKey === 'RD') {
-    calculationBase = cisObj.priceFve;
+    calculationBase = investmentObj.priceFve;
   } else {
-    calculationBase = totalCIS;
+    calculationBase = totalInvestment;
   }
-  
+
+  // 2. Zjistíme "Koláč" (celkový rozpočet PD) pomocí odstupňovaných cen
+  const pdTiers = typeConfig.pdPriceTiers;
+  const totalPdBudget_Base = calculateTieredPrice(calculationBase, pdTiers);
+
+  // 3. Zjistíme finální rozpočet PD (vynásobený koeficientem složitosti)
   const coef = num(el('coef').value);
-  const reserve = 0; 
+  const reserve = 0; // Nepoužíváme
+  const totalPdBudget_Final = totalPdBudget_Base * coef * (1 + reserve / 100);
+
+  // 4. Připravíme sazby pro hodiny
   const hourlyRate = getRateForCalc();
   const hourlyCoef = num(el('hourlyCoef').value);
 
-  // Výsledky
+  // 5. Rozdělíme "Koláč" na jednotlivé stupně
   const resultBody = el('resultBody'); resultBody.innerHTML = '';
   let totalPrice = 0, totalHours = 0;
+  const safeTotalRatio = (totalRatio === 0) ? 1 : totalRatio; // Ochrana proti dělení nulou
 
   for (const st of STAGES) {
-    const p = (include[st.key] ? (perc[st.key] || 0) : 0);
-    const pricePercent = (calculationBase * (p / 100)) * coef * (1 + reserve / 100);
-    const hoursBudget = (hourlyRate > 0 && hourlyCoef > 0) ? (pricePercent / (hourlyRate * hourlyCoef)) : 0;
+    const ratio = (include[st.key] ? (perc[st.key] || 0) : 0);
+    const ratioShare = ratio / safeTotalRatio; // Podíl tohoto stupně na celku
 
-    if (include[st.key] && p > 0) {
-      totalPrice += pricePercent;
+    const price = totalPdBudget_Final * ratioShare;
+    const hoursBudget = (hourlyRate > 0 && hourlyCoef > 0) ? (price / (hourlyRate * hourlyCoef)) : 0;
+
+    if (include[st.key] && ratio > 0) {
+      totalPrice += price;
       totalHours += hoursBudget;
     }
 
     const tr = document.createElement('tr');
     tr.innerHTML = `
       <td>${st.name}</td>
-      <td class="right">${p.toLocaleString('cs-CZ', { maximumFractionDigits: 2 })}%</td>
-      <td class="right">${fmtCZK(pricePercent)}</td>
+      <td class="right">${ratio.toLocaleString('cs-CZ', { maximumFractionDigits: 2 })}</td>
+      <td class="right">${fmtCZK(price)}</td>
       <td class="right">${hoursBudget.toLocaleString('cs-CZ', { maximumFractionDigits: 1 })}</td>`;
     resultBody.appendChild(tr);
   }
 
-  // KPI
-  el('kpiCis').textContent = fmtCZK(totalCIS); 
-  el('kpiCisNote').textContent = cisObj.note || '';
-  el('kpiCoef').textContent = `${coef.toLocaleString('cs-CZ', { maximumFractionDigits: 2 })} × ${hourlyCoef.toLocaleString('cs-CZ', { maximumFractionDigits: 2 })} (${CONFIG.types[typeKey].rateMode === 'unika' ? 'UNIKA' : 'Vlastní'}: ${fmtCZK(hourlyRate)}/h)`;
-  el('kpiTotal').textContent = fmtCZK(totalPrice);
+  // 6. Aktualizujeme KPI
+  el('kpiInvestment').textContent = fmtCZK(totalInvestment);
+  el('kpiInvestmentNote').textContent = investmentObj.note || '';
+  el('kpiTotal').textContent = fmtCZK(totalPrice); // totalPrice je součet, který odpovídá totalPdBudget_Final (pokud jsou všechny zaškrtnuté)
+  el('kpiTotalNote').textContent = `Koeficient složitosti: ${coef}`;
+  el('kpiHourlyRate').textContent = fmtCZK(hourlyRate);
+  el('kpiHourlyRateNote').textContent = `Koeficient profese: ${hourlyCoef}`;
   el('resultSum').textContent = fmtCZK(totalPrice);
   el('resultHours').textContent = totalHours.toLocaleString('cs-CZ', { maximumFractionDigits: 1 });
 }
 
-function openNewTypeDialog(targetSelectId) {
+
+function openNewTypeDialog() {
   const tpl = el('typeDialogTpl');
   const node = tpl.content.cloneNode(true);
   document.body.appendChild(node);
@@ -449,13 +482,15 @@ function openNewTypeDialog(targetSelectId) {
     const key = name.toUpperCase().normalize('NFD').replace(/[^A-Z0-9]+/g, '').slice(0, 6) || `TYP${Math.random().toString(36).slice(2, 6)}`;
     const perc = {};
     dlg.querySelectorAll('input[data-stage]').forEach(i => perc[i.dataset.stage] = num(i.value || '0'));
-    // Přiřadit výchozí hodnoty z "PRU" pro nový typ
-    CONFIG.types[key] = { 
-      label: name, 
-      perc, 
-      rateMode: 'unika', 
-      rateCustom: 1200, 
-      unitCosts: structuredClone(BASE_UNIT_COSTS.PRU) 
+
+    // Nový typ zdědí všechna nastavení z PRU
+    CONFIG.types[key] = {
+      label: name,
+      perc,
+      rateMode: 'unika',
+      rateCustom: 1200,
+      unitCosts: structuredClone(BASE_UNIT_COSTS.PRU),
+      pdPriceTiers: structuredClone(DEFAULTS.PRU.pdPriceTiers)
     };
     saveConfig(CONFIG);
     populateTypeSelects();
@@ -466,11 +501,10 @@ function openNewTypeDialog(targetSelectId) {
   };
 }
 
-// UPRAVENO: Načte VŠE (procenta, sazby, JEDNOTKOVÉ CENY)
 function syncTypeSelects(e) {
   const key = e.target.value;
   setTypeKey(key);
-  populateTypeConfig(key); 
+  populateTypeConfig(key);
   calculate();
 }
 
@@ -478,21 +512,26 @@ function onRateModeChange() {
   const typeKey = getTypeKey();
   const t = CONFIG.types[typeKey];
   const mode = el('rateCustom').checked ? 'custom' : 'unika';
+  const hourlyRateEl = el('hourlyRate'); // Získáme element
   t.rateMode = mode;
   if (mode === 'custom') {
-    el('hourlyRate').disabled = false;
+    hourlyRateEl.disabled = false;
+    hourlyRateEl.classList.add('input-primary'); // <-- PŘIDÁNO ZVÝRAZNĚNÍ
   } else {
-    el('hourlyRate').disabled = true;
-    el('hourlyRate').value = getUnikaRate(typeKey);
+    hourlyRateEl.disabled = true;
+    hourlyRateEl.value = getUnikaRate(typeKey);
+    hourlyRateEl.classList.remove('input-primary'); // <-- PŘIDÁNO ODEBRÁNÍ ZVÝRAZNĚNÍ
   }
   calculate();
 }
 
 function onHourlyRateInput() {
+  const customRateValue = num(el('hourlyRate').value);
   const typeKey = getTypeKey();
-  const t = CONFIG.types[typeKey];
-  t.rateCustom = num(el('hourlyRate').value);
-  recalcDebounced();
+  if (CONFIG.types[typeKey]) {
+    CONFIG.types[typeKey].rateCustom = customRateValue;
+  }
+  recalcDebounced();   
 }
 
 function onCisModeChange() {
@@ -500,27 +539,24 @@ function onCisModeChange() {
   CONFIG.last.cisMode = mode;
   el('modelBlock').style.display = (mode === 'model') ? '' : 'none';
   el('manualBlock').style.display = (mode === 'manual') ? '' : 'none';
+
   saveConfig(CONFIG);
   calculate();
 }
 
-// UPRAVENO: Ukládá procenta, sazby a FIXNÍ jednotkové ceny
+// UPRAVENO: Ukládá poměry, sazby a FIXNÍ jednotkové ceny
 function saveDefaults() {
   const key = getTypeKey();
   if (!CONFIG.types[key]) return;
-  
+
   const { perc } = gatherPercents();
   CONFIG.types[key].perc = perc;
-  
-  // Sazby
+
   CONFIG.types[key].rateMode = el('rateCustom').checked ? 'custom' : 'unika';
   if (CONFIG.types[key].rateMode === 'custom') {
     CONFIG.types[key].rateCustom = num(el('hourlyRate').value);
   }
-  
-  // POUZE FIXNÍ JEDNOTKOVÉ CENY (Tiers se berou z DEFAULTS)
-  CONFIG.types[key].unitCosts.cFveFixed = num(el('cFveFixed').value);
-  CONFIG.types[key].unitCosts.cBessFixed = num(el('cBessFixed').value);
+
   CONFIG.types[key].unitCosts.balancePct = num(el('balancePct').value);
 
   saveConfig(CONFIG);
@@ -534,7 +570,6 @@ el('resetConfig').addEventListener('click', () => {
     populateTypeSelects();
     const key = getTypeKey();
     populateTypeConfig(key);
-    // Také resetujeme poslední zadané kWp/kWh
     el('fveKwp').value = '';
     el('bessKwh').value = '';
     CONFIG.last.modelParams = { fveKwp: 0, bessKwh: 0 };
@@ -543,28 +578,36 @@ el('resetConfig').addEventListener('click', () => {
   }
 });
 
-// UPRAVENO: Funkce tisku (bez velkých změn, jen kosmetika)
+// KOMPLETNĚ PŘEPSANÁ FUNKCE TISKU
 function printOffer() {
   const typeKey = getTypeKey();
   const typeLabel = CONFIG.types[typeKey]?.label || typeKey;
+  const typeConfig = CONFIG.types[typeKey];
 
-  const { perc, include } = gatherPercents();
-  const cisObj = currentCIS();
-  
-  const totalCIS = cisObj.totalValue;
+  const { perc, include, totalRatio } = gatherPercents();
+  const investmentObj = currentInvestment();
+
+  const totalInvestment = investmentObj.totalValue;
   let calculationBase = 0;
   if (typeKey === 'RD') {
-    calculationBase = cisObj.priceFve;
+    calculationBase = investmentObj.priceFve;
   } else {
-    calculationBase = totalCIS;
+    calculationBase = totalInvestment;
   }
 
+  // Logika výpočtu z 'calculate' zkopírována 1:1
+  const pdTiers = typeConfig.pdPriceTiers;
+  const totalPdBudget_Base = calculateTieredPrice(calculationBase, pdTiers);
+
   const coef = num(el('coef').value);
+  const reserve = 0;
+  const totalPdBudget_Final = totalPdBudget_Base * coef * (1 + reserve / 100);
+
   const hourlyCoef = num(el('hourlyCoef').value);
-  const rateMode = CONFIG.types[typeKey].rateMode;
+  const rateMode = typeConfig.rateMode;
   const hourlyRate = getRateForCalc();
-  const reserve = 0; 
   const warningText = el('calcWarning').textContent;
+  const safeTotalRatio = (totalRatio === 0) ? 1 : totalRatio;
 
   let html = `<!doctype html><html lang="cs"><head><meta charset="utf-8"><title>Nabídka PD</title>
     <style>
@@ -581,8 +624,9 @@ function printOffer() {
     </style></head><body>`;
 
   html += `<h1>Nabídka – projektová dokumentace</h1>`;
-  html += `<div class="muted">Typ: <b>${typeLabel}</b> | CIS: <b>${fmtCZK(totalCIS)}</b> | Koef.: <b>${coef}</b> | Koef. profese: <b>${hourlyCoef}</b></div>`;
-  html += `<div class="muted">Sazba: <b>${rateMode === 'unika' ? 'UNIKA' : 'Vlastní'}</b> (${fmtCZK(hourlyRate)}/h)${cisObj.note ? ` | ${cisObj.note}` : ''}</div>`;
+  html += `<div class="muted">Typ: <b>${typeLabel}</b> | Odhad investice: <b>${fmtCZK(totalInvestment)}</b> | Koef. složitosti: <b>${coef}</b></div>`;
+  html += `<div class="muted">Celkový rozpočet PD: <b>${fmtCZK(totalPdBudget_Final)}</b> (vypočteno z investice ${fmtCZK(calculationBase)})</div>`;
+  html += `<div class="muted">Sazba: <b>${rateMode === 'unika' ? 'UNIKA' : 'Vlastní'}</b> (${fmtCZK(hourlyRate)}/h) | Koef. profese: <b>${hourlyCoef}</b></div>`;
 
   if (warningText) {
     html += `<div class="print-warning">${warningText}</div>`;
@@ -591,7 +635,7 @@ function printOffer() {
   html += `<table><thead>
     <tr>
       <th>Stupeň</th>
-      <th class='right'>% z CIS</th>
+      <th class='right'>Poměr (díl)</th>
       <th class='right'>Cena (Kč)</th>
       <th class='right'>Hodinový limit (h)</th>
     </tr>
@@ -600,13 +644,16 @@ function printOffer() {
   let sum = 0, sumHours = 0;
   for (const st of STAGES) {
     if (!include[st.key]) continue;
-    const p = perc[st.key] || 0;
-    const price = (calculationBase * (p / 100)) * coef * (1 + reserve / 100);
+
+    const ratio = perc[st.key] || 0;
+    const ratioShare = ratio / safeTotalRatio;
+    const price = totalPdBudget_Final * ratioShare;
+
     const hours = (hourlyRate > 0 && hourlyCoef > 0) ? (price / (hourlyRate * hourlyCoef)) : 0;
     sum += price; sumHours += hours;
     html += `<tr>
       <td>${st.name}</td>
-      <td class='right'>${p.toLocaleString('cs-CZ', { maximumFractionDigits: 2 })}%</td>
+      <td class='right'>${ratio.toLocaleString('cs-CZ', { maximumFractionDigits: 2 })}</td>
       <td class='right'>${fmtCZK(price)}</td>
       <td class='right'>${hours.toLocaleString('cs-CZ', { maximumFractionDigits: 1 })}</td>
     </tr>`;
@@ -629,14 +676,13 @@ function printOffer() {
 }
 
 // ---------- Init ----------
-// UPRAVENO: DOMContentLoaded - zjednodušené listenery
 window.addEventListener('DOMContentLoaded', () => {
   el('appVer').textContent = `Verze ${APP_VER}`;
   el('year').textContent = new Date().getFullYear();
 
-  populateTypeSelects();
+  populateTypeSelects(); // Naplní JEDEN select
   const key = getTypeKey();
-  populateTypeConfig(key); // Načte % i jednotkové ceny
+  populateTypeConfig(key); 
 
   if (CONFIG.last?.cisMode === 'manual') { el('cisModeManual').checked = true; }
   onCisModeChange(); 
@@ -648,23 +694,21 @@ window.addEventListener('DOMContentLoaded', () => {
   calculate();
 
   // Eventy
-  el('type').addEventListener('change', syncTypeSelects);
-  el('type2').addEventListener('change', syncTypeSelects);
-  el('addType').addEventListener('click', () => openNewTypeDialog('type'));
-  el('addType2').addEventListener('click', () => openNewTypeDialog('type2'));
+  el('projectType').addEventListener('change', syncTypeSelects);
+  el('addType').addEventListener('click', openNewTypeDialog);
 
   el('rateUnika').addEventListener('change', onRateModeChange);
   el('rateCustom').addEventListener('change', onRateModeChange);
-  el('hourlyRate').addEventListener('input', onHourlyRateInput);
+  
+  // ZMĚNA ZDE: Opraven listener pro hourlyRate, aby volal správnou funkci
+  el('hourlyRate').addEventListener('input', onHourlyRateInput); 
 
   el('cisModeManual').addEventListener('change', onCisModeChange);
   el('cisModeModel').addEventListener('change', onCisModeChange);
 
-  // Pole, která jen přepočítávají (ukládají se jen přes "Uložit nastavení")
-  ['cis', 'coef', 'hourlyCoef', 'cFveFixed', 'cBessFixed', 'balancePct']
+  ['cis', 'coef', 'hourlyCoef', 'balancePct']
     .forEach(id => { const n = el(id); if (n) n.addEventListener('input', recalcDebounced); });
   
-  // Pole, která přepočítávají A zárověň se automaticky ukládají (poslední parametry)
   ['fveKwp', 'bessKwh']
     .forEach(id => { 
         const n = el(id); 
@@ -674,7 +718,12 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-  el('stagesBody').addEventListener('input', (e) => { if (e.target.matches('input')) recalcDebounced(); });
+  el('stagesBody').addEventListener('input', (e) => { 
+    if (e.target.matches('input')) {
+      recalcDebounced();
+      updateRatioSummary(); 
+    }
+  });
 
   el('calculate').addEventListener('click', calculate);
   el('saveDefaults').addEventListener('click', saveDefaults);

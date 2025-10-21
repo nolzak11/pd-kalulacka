@@ -5,99 +5,69 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="dark light">
-  <title>Kalkulačka projektové dokumentace (PD) -</title>
+  <title>Kalkulačka PD (v1.3.0)</title>
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
   <div class="container">
     <div class="card">
-      <h1>Kalkulačka projektové dokumentace (PD)</h1>
-      <p class="sub">Orientační výpočet ceny PD. Nyní s odhadem CIS z parametrů FVE/BESS a UNIKA sazbami.</p>
+      <h1>Kalkulačka projektové dokumentace FVE + BESS (PD)</h1>
+      <p class="sub">Orientační výpočet ceny PD dle parametrů FVE/BESS nebo ručního zadání investice.</p>
 
       <div class="grid">
         <section class="card">
-          <div class="inline-options">
-            <div class="switch">
-              <input type="radio" name="cisMode" id="cisModeModel" value="model" checked>
-              <label for="cisModeModel">Odhad CIS z FVE/BESS</label>
-            </div>
-            <div class="switch">
-              <input type="radio" name="cisMode" id="cisModeManual" value="manual">
-              <label for="cisModeManual">Zadat CIS ručně</label>
-            </div>
-          </div>
 
-          <div id="modelBlock" style="margin-top:12px;">
-            <div class="row">
-              <div>
-                <label for="fveKwp">FVE výkon (kWp)</label>
-                <input id="fveKwp" type="number" inputmode="decimal" min="0" step="0.1" placeholder="např. 500" />
-              </div>
-              <div>
-                <label for="bessKwh">BESS kapacita (kWh)</label>
-                <input id="bessKwh" type="number" inputmode="decimal" min="0" step="0.1" placeholder="např. 1200" />
-              </div>
-            </div>
-            <div class="row" style="margin-top:12px;">
-              <div>
-                <label for="balancePct">Rezerva na balance-of-plant (%)</label>
-                <input id="balancePct" type="number" inputmode="decimal" min="0" step="0.5" value="0" />
-              </div>
-            </div>
-
-            <details style="margin-top:12px;">
-              <summary>Jednotkové ceny (řízeno Typem stavby)</summary>
-              <div class="row" style="margin-top:12px;">
-                <div>
-                  <label for="cFveFixed">FVE fixní část (Kč)</label>
-                  <input id="cFveFixed" type="number" inputmode="numeric" min="0" step="50000" />
-                </div>
-                <div>
-                  <label for="cBessFixed">BESS fixní část (Kč)</label>
-                  <input id="cBessFixed" type="number" inputmode="numeric" min="0" step="50000" />
-                </div>
-              </div>
-              <div class="muted" style="margin-top:6px">Pozn.: FVE i BESS jsou modelovány jako fixní část + variabilní cena za jednotku (kWp/kWh). Variabilní ceny jsou odstupňované a řízené "expertním" nastavením v `script.js` pro každý Typ stavby.</div>
-            </details>
-            </div>
-
-          <div id="manualBlock" style="display:none;margin-top:12px;">
-            <div class="row">
-              <div>
-                <label for="cis">Celkové investiční náklady (CIS) – Kč (bez DPH)</label>
-                <input id="cis" type="number" inputmode="numeric" min="0" step="1000" placeholder="např. 10000000" />
-              </div>
-              <div>
-                <label for="type">Typ stavby</label>
-                <div class="stack">
-                  <select id="type"></select>
-                  <button class="btn" id="addType">+ Nový typ</button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="row" style="margin-top:12px;">
+          <div class="row">
             <div>
-              <label for="type2">Typ stavby</label>
+              <label for="projectType">1. Typ stavby</label>
               <div class="stack">
-                <select id="type2"></select>
-                <button class="btn" id="addType2">+ Nový typ</button>
+                <select id="projectType" class="input-primary"></select>
+                <button class="btn" id="addType">+ Nový typ</button>
               </div>
             </div>
             <div>
-              <label for="coef">Složitost / náročnost (koeficient)</label>
-              <input id="coef" type="number" inputmode="decimal" step="0.05" min="0.5" max="2" value="1" />
-              <div class="muted">0,8 = jednodušší | 1,0 = běžná | 1,2 = složitější</div>
+              <label>2. Způsob výpočtu investice</label>
+              <div class="inline-options" style="padding-top: 8px;">
+                <div class="switch">
+                  <input type="radio" name="cisMode" id="cisModeModel" value="model" checked>
+                  <label for="cisModeModel">Odhad z FVE/BESS</label>
+                </div>
+                <div class="switch">
+                  <input type="radio" name="cisMode" id="cisModeManual" value="manual">
+                  <label for="cisModeManual">Zadat celkovou investici ručně</label>
+                </div>
+              </div>
             </div>
           </div>
+          <div class="hr"></div>
+
+          <div id="modelBlock">
+            <label>3. Základní parametry modelu</label>
+            <div class="row" style="margin-top:6px;">
+              <div>
+                <input id="fveKwp" type="number" inputmode="decimal" min="0" step="0.1" placeholder="FVE výkon (kWp)"
+                  class="input-primary" />
+              </div>
+              <div>
+                <input id="bessKwh" type="number" inputmode="decimal" min="0" step="0.1"
+                  placeholder="BESS kapacita (kWh)" class="input-primary" />
+              </div>
+            </div>
+          </div>
+
+          <div id="manualBlock" style="display:none;">
+            <label>3. Ruční zadání investice</label>
+            <div style="margin-top:6px;">
+              <input id="cis" type="number" inputmode="numeric" min="0" step="1000" placeholder="Celková investice (Kč)"
+                class="input-primary" />
+            </div>
+          </div>
+          <div class="hr" style="margin: 24px 0;"></div>
 
           <div class="row align-start" style="margin-top:12px;">
             <div>
-              <label>Hodinová sazba
-                <span class="muted">(UNIKA / Vlastní)</span>
-              </label>
+              <label>4. Hodinová sazba <span class="muted">(UNIKA / Vlastní)</span></label>
               <div class="inline-options">
                 <div class="switch">
                   <input type="radio" name="rateMode" id="rateUnika" value="unika" checked>
@@ -110,52 +80,78 @@
                 <input id="hourlyRate" type="number" inputmode="numeric" min="0" step="50" placeholder="např. 1200"
                   disabled />
               </div>
-              <div class="muted">V režimu UNIKA je hodinovka řízena typem stavby (viz konstanty). V režimu Vlastní lze
-                přepsat.</div>
-            </div>
-            <div>
-              <label for="hourlyCoef">Koeficient profese
-                <span class="help-badge" tabindex="0">?
-                  <span class="help-tip">
-                    Koeficient násobí hodinovou sazbu podle seniority/typu práce:
-                    <br><b>1.0</b> běžná profese,
-                    <b>0.8–0.9</b> junior,
-                    <b>1.2–1.3</b> senior/HIP,
-                    <b>1.4–1.6</b> specialista,
-                    <b>1.5–2.0</b> expresní termín.
-                    <br>Vyšší koeficient ⇒ menší hodinový limit (při stejné ceně z %).
-                  </span>
-                </span>
-              </label>
-              <input id="hourlyCoef" type="number" inputmode="decimal" step="0.05" min="0.5" max="2" value="1" />
-              <div class="muted">viz: help-tip (?)</div>
             </div>
           </div>
 
-          <div class="hr"></div>
+          <details class="settings-group">
+            <summary>Pokročilé nastavení: Koeficienty a sazby</summary>
+            <div class="row" style="margin-top:12px;">
+              <div>
+                <label for="coef">Složitost / náročnost (koeficient)
+                  <span class="help-badge" tabindex="0">?
+                    <span class="help-tip">
+                      Koeficient zohledňuje náročnost práce - výchozí je 1,0.
+                      <br>0,8 = jednodušší, 1,0 = běžná, 1,2–1,5 = složitější, 1,6–2,0 = vysoce náročná.  
 
-          <details>
-            <summary>Procenta podle stupňů PD (upravte dle potřeby)</summary>
+                    </span>
+                  </span>
+                </label>
+                <input id="coef" type="number" inputmode="decimal" step="0.05" min="0.5" max="2" value="1" />
+                </div>
+              <div>
+                <label for="hourlyCoef">Koeficient profese
+                  <span class="help-badge" tabindex="0">?
+                    <span class="help-tip">
+                      Koeficient násobí hodinovou sazbu podle seniority/typu práce:
+                      <br><b>1.0</b> běžná profese, <b>0.8–0.9</b> junior, <b>1.2–1.3</b> senior/HIP...
+                    </span>
+                  </span>
+                </label>
+                <input id="hourlyCoef" type="number" inputmode="decimal" step="0.05" min="0.5" max="2" value="1" />
+              </div>
+              <div class="row" style="margin-top:12px;">
+                <div>
+                  <label for="balancePct">Ostatní náklady a rezerva (%)
+                    <span class="help-badge" tabindex="0">?
+                      <span class="help-tip">
+                        Procentuální navýšení základní ceny FVE a BESS o vedlejší náklady.<br>
+                        Zahrnuje např.: kabeláž, nosné konstrukce, zemní práce, administrativa, rezerva projektu...
+                      </span>
+                    </span>
+                  </label>
+                  <input id="balancePct" type="number" inputmode="decimal" min="0" step="0.5" value="0" />
+                </div>
+              </div>
+            </div>
+
+          </details>
+          <details class="settings-group">
+            <summary>Pokročilé nastavení: Rozdělení rozpočtu PD (poměry)</summary>
             <table class="table" id="stagesTable">
               <thead>
                 <tr>
                   <th>Stupeň</th>
-                  <th class="right">Podíl z CIS (%)</th>
+                  <th class="right">Poměr (díl)</th>
                   <th class="right">Zahrnout</th>
                 </tr>
               </thead>
               <tbody id="stagesBody"></tbody>
+              <tfoot>
+                <tr>
+                  <td colspan="3" class="ratio-summary">
+                    Součet poměrů (zaškrtnutých): <span id="stagesTotalRatio">0.0</span>
+                  </td>
+                </tr>
+              </tfoot>
             </table>
-            <div class="footnote">Tip: Procenta jsou výchozí pro zvolený typ, ale můžete je kdykoli přepsat. Tlačítkem
-              níže je uložíte jako výchozí.</div>
           </details>
 
-          <div class="hr"></div>
+          <div class="hr" style="margin-top: 20px;"></div>
 
           <div class="stack">
             <button class="btn primary" id="calculate">Spočítat</button>
             <button class="btn" id="printOffer">Tisk / PDF nabídka</button>
-            <button class="btn" id="saveDefaults">Uložit nastavení k typu</button>
+            <button class="btn" id="saveDefaults">Uložit poměry, ceny & sazby</button>
             <button class="btn" id="resetConfig">Obnovit výchozí</button>
             <span class="notice">Výsledky se přepočítávají průběžně.</span>
           </div>
@@ -166,29 +162,32 @@
 
           <div class="kpi">
             <div class="item">
-              <div class="muted">CIS (bez DPH)</div>
-              <div class="value" id="kpiCis">–</div>
-              <div class="muted" id="kpiCisNote"></div>
+              <div class="muted">Odhad investice (bez DPH)</div>
+              <div class="value" id="kpiInvestment">–</div>
+              <div class="muted" id="kpiInvestmentNote"></div>
             </div>
             <div class="item">
-              <div class="muted">Koeficient × rezerva</div>
-              <div class="value" id="kpiCoef">–</div>
-            </div>
-            <div class="item">
-              <div class="muted">Celkem PD (součet)</div>
+              <div class="muted">Celkový rozpočet PD</div>
               <div class="value" id="kpiTotal">–</div>
+              <div class="muted" id="kpiTotalNote"></div>
+            </div>
+            <div class="item">
+              <div class="muted">Hodinová sazba</div>
+              <div class="value" id="kpiHourlyRate">–</div>
+              <div class="muted" id="kpiHourlyRateNote"></div>
             </div>
           </div>
 
-          <div id="calcWarning" class="muted" style="color: var(--warn); margin-top: 8px; text-align: center; display: none; font-weight: 600;">
-            </div>
+          <div id="calcWarning" class="muted"
+            style="color: var(--warn); margin-top: 8px; text-align: center; display: none; font-weight: 600;">
+          </div>
 
           <table class="table" style="margin-top:16px;" id="resultTable">
             <thead>
               <tr>
                 <th>Stupeň</th>
-                <th class="right nowrap">% z CIS</th>
-                <th class="right nowrap">Cena % (Kč)</th>
+                <th class="right nowrap">Poměr (díl)</th>
+                <th class="right nowrap">Cena (Kč)</th>
                 <th class="right nowrap">Hodinový limit (h)</th>
               </tr>
             </thead>
@@ -205,8 +204,7 @@
           <div class="hr"></div>
 
           <div class="muted">
-            Pozn.: Jde o orientační odhad dle procenta z CIS. Skutečná cena závisí na rozsahu, BIM koordinaci, termínech
-            apod.
+            Pozn.: Jde o orientační odhad. Cena je rozdělena dle poměrů a vynásobena koeficientem složitosti.
           </div>
         </section>
       </div>
@@ -225,12 +223,12 @@
       </div>
       <div class="hr"></div>
       <div>
-        <label>Výchozí procenta pro stupně</label>
+        <label>Výchozí poměry pro stupně</label>
         <table class="table">
           <thead>
             <tr>
               <th>Stupeň</th>
-              <th class="right">% z CIS</th>
+              <th class="right">Poměr (díl)</th>
             </tr>
           </thead>
           <tbody id="newTypePerc"></tbody>
